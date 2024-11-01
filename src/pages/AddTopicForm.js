@@ -30,7 +30,7 @@ const AddTopicForm = () => {
             const fetchTopic = async () => {
                 try {
                     const jwtToken = localStorage.getItem('jwtToken');
-                    const response = await fetch(`http://localhost:8080/api/sessions/${id}/topics/${idt}`, {
+                    const response = await fetch(`${process.env.REACT_APP_API_URL}/api/sessions/${id}/topics/${idt}`, {
                         method: 'GET',
                         headers: {
                             'Authorization': `Bearer ${jwtToken}`,
@@ -71,7 +71,7 @@ const AddTopicForm = () => {
         let response;
         if (idt) {
             // Update the existing topic
-            response = await fetch(`http://localhost:8080/api/topics/edit/${idt}`, {
+           response = await fetch(`${process.env.REACT_APP_API_URL}/api/topics/edit/${idt}`, {
                 method: 'POST',
                 headers: {
                     'Authorization': `Bearer ${jwtToken}`,
@@ -81,7 +81,7 @@ const AddTopicForm = () => {
         } else {
 
             // Create a new topic
-            response = await fetch(`http://localhost:8080/api/sessions/${id}/topic/add`, {
+            response = await fetch(`${process.env.REACT_APP_API_URL}/api/sessions/${id}/topic/add`, {
                 method: 'POST', // Using POST for creating
                 headers: {
                     'Authorization': `Bearer ${jwtToken}`,
@@ -158,7 +158,7 @@ const AddTopicForm = () => {
     const handlePdfFetch = async (pdfId) => {
         const token = localStorage.getItem('jwtToken'); // Retrieve the token from local storage
         try {
-            const response = await fetch(`http://localhost:8080/api/topics/pdf/${pdfId}`, {
+            const response = await fetch(`${process.env.REACT_APP_API_URL}/api/topics/pdf/${pdfId}`, {
                 method: 'GET',
                 headers: {
                     'Authorization': `Bearer ${token}`,

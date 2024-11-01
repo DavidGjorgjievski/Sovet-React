@@ -39,7 +39,7 @@ function EditUserForm() {
     useEffect(() => {
         const fetchUserData = async () => {
             try {
-                const response = await fetch(`http://localhost:8080/api/admin/user/${username}`, {
+                const response = await fetch(`${process.env.REACT_APP_API_URL}/api/admin/user/${username}`, {
                     method: 'GET',
                     headers: {
                         'Authorization': `Bearer ${token}`,
@@ -81,7 +81,7 @@ function EditUserForm() {
     submissionData.append('status', formData.status);
 
     try {
-        const response = await fetch(`http://localhost:8080/api/admin/update/${username}`, {
+        const response = await fetch(`${process.env.REACT_APP_API_URL}/api/admin/update/${username}`, {
             method: 'PUT',
             headers: {
                 'Authorization': `Bearer ${token}`,

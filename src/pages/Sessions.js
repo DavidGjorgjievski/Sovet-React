@@ -21,7 +21,7 @@ function Sessions() {
         // Fetch sessions from the API
         const fetchSessions = async () => {
             try {
-                const response = await fetch('http://localhost:8080/api/sessions', {
+                const response = await fetch(process.env.REACT_APP_API_URL + '/api/sessions', {
                     method: 'GET',
                     headers: {
                         'Authorization': `Bearer ${token}`,
@@ -74,7 +74,7 @@ function Sessions() {
         if (selectedSession) {
             try {
                 const token = localStorage.getItem('jwtToken');
-                const response = await fetch(`http://localhost:8080/api/sessions/delete/${selectedSession.id}`, {
+                const response = await fetch(`${process.env.REACT_APP_API_URL}/api/sessions/delete/${selectedSession.id}`, {
                     method: 'DELETE',
                     headers: {
                         'Authorization': `Bearer ${token}`,
@@ -97,7 +97,7 @@ function Sessions() {
 const handleExportClick = async (sessionId, sessionName) => { 
     try {
         const token = localStorage.getItem('jwtToken');
-        const response = await fetch(`http://localhost:8080/api/sessions/export/${sessionId}`, {
+        const response = await fetch(`${process.env.REACT_APP_API_URL}/api/sessions/export/${sessionId}`, {
             method: 'GET',
             headers: {
                 'Authorization': `Bearer ${token}`,

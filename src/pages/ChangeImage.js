@@ -65,7 +65,7 @@ const ChangeImage = () => {
         formData.append('file', file);
 
         try {
-            const response = await fetch('http://localhost:8080/api/change-image', {
+            const response = await fetch(process.env.REACT_APP_API_URL + '/api/change-image', {
                 method: 'POST',
                 headers: {
                     'Authorization': `Bearer ${token}`,

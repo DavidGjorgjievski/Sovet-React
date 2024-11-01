@@ -14,15 +14,15 @@ function AdminPanel() {
     const userData = JSON.parse(localStorage.getItem('userInfo')) || {};
     const token = localStorage.getItem('jwtToken');
     const [users, setUsers] = useState([]);
-    const [modalVisible, setModalVisible] = useState(false); // State to control modal visibility
-    const [userToDelete, setUserToDelete] = useState(null); // State to hold user to be deleted
+    const [modalVisible, setModalVisible] = useState(false); 
+    const [userToDelete, setUserToDelete] = useState(null); 
     const [errorMessage, setErrorMessage] = useState(null);
 
     useEffect(() => {
         const fetchUsers = async () => {
             if (token) {
                 try {
-                    const response = await axios.get('http://localhost:8080/api/admin/users', {
+                    const response = await axios.get(process.env.REACT_APP_API_URL + '/api/admin/users', {
                         headers: {
                             'Authorization': `Bearer ${token}`,
                         },
@@ -57,7 +57,7 @@ function AdminPanel() {
         }
 
         try {
-            await axios.delete(`http://localhost:8080/api/admin/users/delete/${userToDelete.username}`, {
+            await axios.delete(`${process.env.REACT_APP_API_URL}/api/admin/users/delete/${userToDelete.username}`, {
                 headers: {
                     'Authorization': `Bearer ${token}`,
                 },

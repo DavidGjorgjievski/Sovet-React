@@ -63,15 +63,15 @@ function AddUserForm() {
             if (selectedFile.size > 51200) { // Validate file size (50KB limit)
                 setFileSizeError(true);
                 setFileError(false);
-                setFileName('Нема избрана слика'); // Reset file name if too large
+                setFileName('Нема избрана слика'); 
             } else {
                 setFormData({ ...formData, file: selectedFile });
                 setFileError(false);
                 setFileSizeError(false);
-                setFileName(selectedFile.name); // Set file name when valid
+                setFileName(selectedFile.name); 
             }
         } else {
-            setFileName('Нема избрана слика'); // Reset file name if no file is selected
+            setFileName('Нема избрана слика'); 
         }
     };
 
@@ -103,7 +103,7 @@ function AddUserForm() {
         }
 
         try {
-            const response = await fetch("http://localhost:8080/api/admin/add", {
+            const response = await fetch(process.env.REACT_APP_API_URL + "/api/admin/add", {
                 method: 'POST',
                 headers: {
                     'Authorization': `Bearer ${token}`,

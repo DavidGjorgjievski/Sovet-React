@@ -19,7 +19,7 @@ function Home() {
             const token = localStorage.getItem('jwtToken');
 
             try {
-                const response = await fetch("https://sovetglasanjevinicareact-da516defa923.herokuapp.com/api/home", {
+                const response = await fetch(process.env.REACT_APP_API_URL + "/api/home", {
                     method: 'GET',
                     headers: {
                         'Authorization': `Bearer ${token}`,

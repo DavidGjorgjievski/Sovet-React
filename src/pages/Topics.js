@@ -38,7 +38,7 @@ function Topics() {
 
 const fetchTopics = useCallback(async () => {
     try {
-        const response = await fetch(`http://localhost:8080/api/sessions/${id}/topics`, {
+        const response = await fetch(`${process.env.REACT_APP_API_URL}/api/sessions/${id}/topics`, {
             method: 'GET',
             headers: {
                 'Authorization': `Bearer ${token}`,
@@ -69,7 +69,7 @@ useEffect(() => {
 const handleDelete = async () => {
     const jwtToken = localStorage.getItem('jwtToken');
     try {
-        const response = await fetch(`http://localhost:8080/api/topics/${selectedTopicId}`, {
+        const response = await fetch(`${process.env.REACT_APP_API_URL}/api/topics/${selectedTopicId}`, {
             method: 'DELETE',
             headers: {
                 'Authorization': `Bearer ${jwtToken}`,
@@ -110,7 +110,7 @@ const handleDelete = async () => {
 
     const handlePdfFetch = async (pdfId) => {
         try {
-            const response = await fetch(`http://localhost:8080/api/topics/pdf/${pdfId}`, {
+            const response = await fetch(`${process.env.REACT_APP_API_URL}/api/topics/pdf/${pdfId}`, {
                 method: 'GET',
                 headers: {
                     'Authorization': `Bearer ${token}`,
@@ -134,7 +134,7 @@ const handleDelete = async () => {
 
     const startVoting = async (topicId, token) => {
     try {
-        const response = await fetch(`http://localhost:8080/api/topics/active/${topicId}`, {
+        const response = await fetch(`${process.env.REACT_APP_API_URL}/api/topics/active/${topicId}`, {
             method: 'GET',
             headers: {
                 'Authorization': `Bearer ${token}`,
@@ -154,7 +154,7 @@ const handleDelete = async () => {
 
 const finishVoting = async (topicId, token) => {
     try {
-        const response = await fetch(`http://localhost:8080/api/topics/finish/${topicId}`, {
+        const response = await fetch(`${process.env.REACT_APP_API_URL}/api/topics/finish/${topicId}`, {
             method: 'GET',
             headers: {
                 'Authorization': `Bearer ${token}`,
@@ -174,7 +174,7 @@ const finishVoting = async (topicId, token) => {
 
 const restartVoting = async (topicId, token) => {
     try {
-        const response = await fetch(`http://localhost:8080/api/topics/create/${topicId}`, {
+        const response = await fetch(`${process.env.REACT_APP_API_URL}/api/topics/create/${topicId}`, {
             method: 'GET',
             headers: {
                 'Authorization': `Bearer ${token}`,
@@ -194,7 +194,7 @@ const restartVoting = async (topicId, token) => {
 
 const handleVote = async (topicId, voteType) => {
     try {
-        const response = await fetch(`http://localhost:8080/api/topics/${voteType}/${topicId}`, {
+        const response = await fetch(`${process.env.REACT_APP_API_URL}/api/topics/${voteType}/${topicId}`, {
             method: 'GET',
             headers: {
                 'Authorization': `Bearer ${token}`,

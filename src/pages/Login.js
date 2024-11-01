@@ -31,7 +31,7 @@ function Login() {
         setLoading(true); 
 
         try {
-            const response = await fetch('https://sovetglasanjevinicareact-da516defa923.herokuapp.com/api/login', {
+            const response = await fetch(process.env.REACT_APP_API_URL + '/api/login', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',

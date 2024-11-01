@@ -23,7 +23,7 @@ function AddSessionForm() {
             if (id) {
                 const jwtToken = localStorage.getItem('jwtToken');
                 try {
-                    const response = await fetch(`http://localhost:8080/api/sessions/${id}`, {
+                    const response = await fetch(`${process.env.REACT_APP_API_URL}/api/sessions/${id}`, {
                         method: 'GET',
                         headers: {
                             'Authorization': `Bearer ${jwtToken}`, 
@@ -60,8 +60,8 @@ function AddSessionForm() {
         try {
         // Set the URL based on whether it's editing or adding a session
         const url = id 
-            ? `http://localhost:8080/api/sessions/edit/${id}` 
-            : 'http://localhost:8080/api/sessions/add';
+            ? `${process.env.REACT_APP_API_URL}/api/sessions/edit/${id}` 
+            : `${process.env.REACT_APP_API_URL}/api/sessions/add`;
 
         const method = id ? 'PUT' : 'POST'; // Use PUT for edit, POST for add
 
