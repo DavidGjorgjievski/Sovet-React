@@ -8,7 +8,7 @@ const Logout = () => {
     useEffect(() => {
         const logoutUser = async () => {
             try {
-                await axios.post(process.env.REACT_APP_API_URL + 'api/logout', null, {
+                await axios.post(process.env.REACT_APP_API_URL + '/api/logout', null, {
                     headers: {
                         Authorization: `Bearer ${localStorage.getItem('jwtToken')}` 
                     }
