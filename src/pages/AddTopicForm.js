@@ -1,0 +1,279 @@
+import React, { useState, useEffect } from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
+import { Helmet, HelmetProvider } from 'react-helmet-async';
+import HeadLinks from '../components/HeadLinks';
+import Header from '../components/Header';
+import { initializeMobileMenu } from '../components/mobileMenu';
+import {
+    handleDragOver,
+    handleDragLeave,
+    handleDrop,
+    handleFileChange,
+    handlePaste,
+    MAX_FILE_SIZE_BYTES,
+} from '../util/fileUpload';
+import '../styles/AddTopicForm.css';
+
+const AddTopicForm = () => {
+    const { id, idt } = useParams(); // Retrieve id and idt from URL parameters
+    const [title, setTitle] = useState('');
+    const [file, setFile] = useState(null);
+    const [pdfId, setPdfId] = useState(null);
+    const [fileError, setFileError] = useState(false);
+    const [fileTypeError, setFileTypeError] = useState(false); // State for file type error
+    const [currentPdfFileName, setCurrentPdfFileName] = useState(''); // State for current PDF file name
+    const navigate = useNavigate();
+    const userInfo = JSON.parse(localStorage.getItem('userInfo')) || {}; // Retrieve userInfo from local storage
+
+    useEffect(() => {
+        if (idt) {
+            const fetchTopic = async () => {
+                try {
+                    const jwtToken = localStorage.getItem('jwtToken');
+                    const response = await fetch(`http://localhost:8080/api/sessions/${id}/topics/${idt}`, {
+                        method: 'GET',
+                        headers: {
+                            'Authorization': `Bearer ${jwtToken}`,
+                        },
+                    });
+
+                    if (response.ok) {
+                        const topicData = await response.json();
+                        setTitle(topicData.title);
+                        setCurrentPdfFileName(topicData.pdfFileName); // Set the current PDF file name
+                        setPdfId(topicData.pdfFileId)
+                    } else {
+                        console.error("Failed to fetch topic.");
+                    }
+                } catch (error) {
+                    console.error("Error fetching the topic:", error);
+                }
+            };
+
+            fetchTopic();
+        }
+    }, [idt, id]);
+
+    const updateFileName = (fileName) => {
+        const fileDropMessage = document.querySelector('.file-drop-message');
+        fileDropMessage.textContent = fileName;
+    };
+
+    const handleSubmit = async (e) => {
+    e.preventDefault();
+    const formData = new FormData();
+    formData.append('title', title);
+    if (file) formData.append('file', file);
+
+    const jwtToken = localStorage.getItem('jwtToken');
+
+    try {
+        let response;
+        if (idt) {
+            // Update the existing topic
+            response = await fetch(`http://localhost:8080/api/topics/edit/${idt}`, {
+                method: 'POST',
+                headers: {
+                    'Authorization': `Bearer ${jwtToken}`,
+                },
+                body: formData,
+            });
+        } else {
+
+            // Create a new topic
+            response = await fetch(`http://localhost:8080/api/sessions/${id}/topic/add`, {
+                method: 'POST', // Using POST for creating
+                headers: {
+                    'Authorization': `Bearer ${jwtToken}`,
+                },
+                body: formData,
+            });
+        }
+
+        if (response.ok) {
+            const data = await response.json(); // Parse the response data
+            const topicId = data.topicId; // Get the topicId from the response
+            navigate(`/sessions/${id}/topics#topic-${topicId}`); // Navigate to the specific topic
+        } else {
+            console.error("Failed to update or create topic.");
+        }
+    } catch (error) {
+        console.error("Error submitting the form:", error);
+    }
+};
+
+
+    useEffect(() => {
+        const cleanupMobileMenu = initializeMobileMenu();
+        return () => {
+            cleanupMobileMenu(); // Cleanup on unmount
+        };
+    }, []);
+
+    useEffect(() => {
+        const fileDropArea = document.querySelector('.file-drop-area');
+        fileDropArea.addEventListener('dragover', (event) => handleDragOver(event, fileDropArea));
+        fileDropArea.addEventListener('dragleave', () => handleDragLeave(fileDropArea));
+        fileDropArea.addEventListener('drop', (event) => handleDrop(event, document.getElementById('file'), updateFileName, setFileError, setFileTypeError));
+
+        document.addEventListener('paste', (event) => handlePaste(event, document.getElementById('file'), updateFileName, setFileError, setFileTypeError));
+
+        return () => {
+            fileDropArea.removeEventListener('dragover', (event) => handleDragOver(event, fileDropArea));
+            fileDropArea.removeEventListener('dragleave', () => handleDragLeave(fileDropArea));
+            fileDropArea.removeEventListener('drop', (event) => handleDrop(event, document.getElementById('file'), updateFileName, setFileError, setFileTypeError));
+            document.removeEventListener('paste', (event) => handlePaste(event, document.getElementById('file'), updateFileName, setFileError, setFileTypeError));
+        };
+    }, []);
+
+    const handleFileInputChange = (e) => {
+        const selectedFile = e.target.files[0];
+
+        // Reset errors at the start of file selection
+        setFileError(false);
+        setFileTypeError(false);
+
+        if (selectedFile) {
+            // Check for file size
+            if (selectedFile.size > MAX_FILE_SIZE_BYTES) {
+                setFileError(true);
+                updateFileName('');
+                setFile(null);
+                return;
+            }
+            // Check for file type
+            else if (selectedFile.type !== 'application/pdf') {
+                setFileTypeError(true);
+                updateFileName('');
+                setFile(null);
+                return;
+            }
+
+            // If file is valid, update file state and name
+            handleFileChange(e, updateFileName, setFileError, setFileTypeError);
+            setFile(selectedFile);
+        }
+    };
+
+    const handlePdfFetch = async (pdfId) => {
+        const token = localStorage.getItem('jwtToken'); // Retrieve the token from local storage
+        try {
+            const response = await fetch(`http://localhost:8080/api/topics/pdf/${pdfId}`, {
+                method: 'GET',
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                    'Accept': 'application/pdf',
+                },
+            });
+
+            if (response.ok) {
+                // Create a blob from the response
+                const blob = await response.blob();
+                const url = window.URL.createObjectURL(blob);
+                // Open the PDF in a new tab
+                window.open(url, '_blank');
+            } else {
+                console.error('PDF not found or could not be retrieved.');
+            }
+        } catch (error) {
+            console.error('Error fetching PDF:', error);
+        }
+    };
+
+    return (
+        <HelmetProvider>
+            <div className="add-session-container">
+                <Helmet>
+                    <title>{idt ? 'Уреди Точка' : 'Додади Точка'}</title>
+                </Helmet>
+                <HeadLinks />
+                <Header userInfo={userInfo} />
+
+                <div className="add-session-body-container container">
+                    <div className="container mt-4">
+                        <div className="add-session-header-div">
+                            <h1>{idt ? "Уреди точка" : "Додади точка"}</h1>
+                        </div>
+                        <div className="row justify-content-center">
+                            <div className="col-md-6">
+                                <form onSubmit={handleSubmit}>
+                                    <div className="form-group">
+                                        <label htmlFor="title" className="label-add">Наслов на точка:</label>
+                                        <input
+                                            type="text"
+                                            className="form-control form-control-lg mb-2"
+                                            id="title"
+                                            name="title"
+                                            required
+                                            value={title}
+                                            onChange={(e) => setTitle(e.target.value)}
+                                            placeholder="Внеси наслов на точка"
+                                        />
+                                    </div>
+                                    <label htmlFor="file" className="label-add">Прикачи PDF датотека:</label>
+                                    <div className="form-group d-flex justify-content-center">
+                                        <div className={`file-drop-area ${fileError || fileTypeError ? 'is-active' : ''}`}>
+                                            <p className="file-drop-message">
+                                                Пуштете датотека тука или <span>кликнете за да изберете PDF датотеката</span>
+                                            </p>
+                                            <input
+                                                type="file"
+                                                id="file"
+                                                name="file"
+                                                accept="application/pdf"
+                                                onChange={handleFileInputChange}
+                                            />
+                                        </div>
+                                    </div>
+
+                                    {fileError && (
+                                        <div className="error-message-pdf">
+                                            <p className="text-danger">Максималната големина на PDF датотека е 10MB!</p>
+                                        </div>
+                                    )}
+                                    {fileTypeError && (
+                                        <div className="error-message-pdf">
+                                            <p className="text-danger">Молам, прикачете само PDF датотеки!</p>
+                                        </div>
+                                    )}
+
+                                    {currentPdfFileName && (
+                                        <div>
+                                            <span>Тековна PDF датотека:</span>
+                                            <span
+                                                onClick={() => handlePdfFetch(pdfId)} // Call the function on click
+                                                style={{ cursor: 'pointer', color: 'blue', textDecoration: 'underline' }} // Styles for better UX
+                                            >
+                                                {currentPdfFileName}
+                                            </span>
+                                        </div>
+                                    )}
+
+                                    <div className="mt-2 d-flex flex-start">
+                                        <button type="submit"
+                                            className={`btn ${idt ? "btn-warning" : "btn-primary"} btn-lg me-2`}>
+                                            {idt ? "Уреди" : "Додади"}
+                                        </button>
+
+                                        <button
+                                            type="button"
+                                            className="btn btn-danger btn-lg"
+                                            onClick={() => {
+                                                const targetUrl = idt ? `/sessions/${id}/topics#topic-${idt}` : `/sessions/${id}/topics`;
+                                                navigate(targetUrl);
+                                            }}
+                                        >
+                                            Назад
+                                        </button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </HelmetProvider>
+    );
+};
+
+export default AddTopicForm;
