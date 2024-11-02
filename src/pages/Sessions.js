@@ -215,7 +215,9 @@ function Sessions() {
                             </div>
                         ))
                     ) : (
-                        <p>No sessions available.</p>
+                        <div className='mt-3'>
+                            <h4>Нема достапни седници</h4>
+                        </div>
                     )}
                 </div>
 
