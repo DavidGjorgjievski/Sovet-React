@@ -114,8 +114,9 @@ function AdminPanel() {
                 </div>
             )}
 
+ {!loading && (
             <div className="admin-user-lists">
-                {!loading && users.length > 0 ? (
+                {users.length > 0 ? (
                     <>
                         <UserTable
                             users={users.filter(user => user.role === 'ROLE_ADMIN')}
@@ -149,10 +150,11 @@ function AdminPanel() {
                             onEditClick={handleEditClick}
                         />
                     </>
-                ) : !loading && (
+                ) : (
                     <p className="text-center mt-4">Нема достапни корисници.</p>
                 )}
             </div>
+        )}
         </div>
 
         <ConfirmModal
