@@ -10,6 +10,7 @@ function Sessions() {
     const [sessions, setSessions] = useState([]);
     const [showModal, setShowModal] = useState(false);
     const [selectedSession, setSelectedSession] = useState(null);
+    const [loading, setLoading] = useState(true); // Step 1: Add loading state
 
     // Retrieve userInfo from local storage
     const userInfo = JSON.parse(localStorage.getItem('userInfo')) || {};
@@ -20,6 +21,7 @@ function Sessions() {
 
         // Fetch sessions from the API
         const fetchSessions = async () => {
+            setLoading(true); // Start loading
             try {
                 const response = await fetch(process.env.REACT_APP_API_URL + '/api/sessions', {
                     method: 'GET',
@@ -37,6 +39,8 @@ function Sessions() {
                 setSessions(data);
             } catch (error) {
                 console.error('Error fetching sessions:', error);
+            } finally {
+                setLoading(false); // Stop loading
             }
         };
 
@@ -94,44 +98,40 @@ function Sessions() {
         }
     };
 
-const handleExportClick = async (sessionId, sessionName) => { 
-    try {
-        const token = localStorage.getItem('jwtToken');
-        const response = await fetch(`${process.env.REACT_APP_API_URL}/api/sessions/export/${sessionId}`, {
-            method: 'GET',
-            headers: {
-                'Authorization': `Bearer ${token}`,
-                'Content-Type': 'application/pdf'
+    const handleExportClick = async (sessionId, sessionName) => { 
+        try {
+            const token = localStorage.getItem('jwtToken');
+            const response = await fetch(`${process.env.REACT_APP_API_URL}/api/sessions/export/${sessionId}`, {
+                method: 'GET',
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                    'Content-Type': 'application/pdf'
+                }
+            });
+
+            if (!response.ok) {
+                throw new Error('Failed to export session');
             }
-        });
 
-        if (!response.ok) {
-            throw new Error('Failed to export session');
+            const blob = await response.blob();
+
+            let filename = sessionName ? `${sessionName}.pdf` : 'session.pdf'; 
+            const url = window.URL.createObjectURL(blob);
+            
+            // Open the PDF in a new tab
+            const newTab = window.open(url, '_blank'); 
+            if (newTab) {
+                setTimeout(function () {
+                    newTab.document.title = filename;
+                }, 15);
+            } else {
+                console.error('Failed to open new tab. Please check your popup blocker settings.');
+            }
+
+        } catch (error) {
+            console.error('Error exporting session:', error);
         }
-
-        const blob = await response.blob();
-
-        let filename = sessionName ? `${sessionName}.pdf` : 'session.pdf'; 
-    
-        const url = window.URL.createObjectURL(blob);
-        
-        // Open the PDF in a new tab
-        const newTab = window.open(url, '_blank'); 
-        if (newTab) {
-            setTimeout(function () {
-            newTab.document.title = filename;
-        }, 15);
-        } else {
-            console.error('Failed to open new tab. Please check your popup blocker settings.');
-        }
-
-    } catch (error) {
-        console.error('Error exporting session:', error);
-    }
-};
-
-
-
+    };
 
     return (
         <div className="sessions-container">
@@ -159,7 +159,11 @@ const handleExportClick = async (sessionId, sessionName) => {
                 )}
 
                 <div className="session-body">
-                    {sessions.length > 0 ? (
+                    {loading ? ( 
+                        <div className="loading-spinner">
+                            <img src={`${process.env.PUBLIC_URL}/images/loading.svg`} alt="Loading..." />
+                        </div>
+                    ) : sessions.length > 0 ? (
                         sessions.map((session) => (
                             <div key={session.id} className="session-item">
                                 <span id={`session-${session.id}`} className='id-selector-session'></span>
@@ -182,9 +186,9 @@ const handleExportClick = async (sessionId, sessionName) => {
                                                 <div>
                                                     <div className="export-button-div">
                                                         <button 
-                                                        onClick={() => handleExportClick(session.id,session.name)} // Pass session.id here
-                                                        className="btn btn-sm btn-primary session-button-size">
-                                                        Експорт
+                                                            onClick={() => handleExportClick(session.id,session.name)}
+                                                            className="btn btn-sm btn-primary session-button-size">
+                                                            Експорт
                                                         </button>
                                                     </div>
                                                 </div>
@@ -219,7 +223,7 @@ const handleExportClick = async (sessionId, sessionName) => {
                     show={showModal}
                     onClose={handleCloseModal}
                     onConfirm={handleConfirmDelete}
-                    sessionName={selectedSession ? selectedSession.name : ''}
+                    sessionName={selectedSession ? selectedSession.name : ''} 
                 />
             </main>
         </div>

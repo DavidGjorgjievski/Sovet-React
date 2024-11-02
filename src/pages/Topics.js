@@ -17,6 +17,7 @@ function Topics() {
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [selectedTopicId, setSelectedTopicId] = useState(null);
     const [selectedTopicTitle, setSelectedTopicTitle] = useState(null);
+    const [loading, setLoading] = useState(true); // Add loading state
 
 
      const openModal = (topicId,topicTitle) => {
@@ -37,6 +38,7 @@ function Topics() {
 
 
 const fetchTopics = useCallback(async () => {
+    setLoading(true); // Set loading to true when starting to fetch
     try {
         const response = await fetch(`${process.env.REACT_APP_API_URL}/api/sessions/${id}/topics`, {
             method: 'GET',
@@ -53,9 +55,10 @@ const fetchTopics = useCallback(async () => {
         setTopics(data);
     } catch (error) {
         console.error('Error fetching topics:', error);
+    } finally {
+        setLoading(false); // Set loading to false after fetching is complete
     }
 }, [id, token]);
-
 useEffect(() => {
     if (userInfo && userInfo.role) {
         setUserRole(userInfo.role);
@@ -246,7 +249,12 @@ const handleVote = async (topicId, voteType) => {
             )}
 
                 <div className="topic-body">
-                    {topics
+                      {loading ? ( 
+                        <div className="loading-spinner">
+                            <img src={`${process.env.PUBLIC_URL}/images/loading.svg`} alt="Loading..." />
+                        </div>
+                    ) : topics.length > 0 ? (
+                    topics
                      .sort((a, b) => a.id - b.id) 
                         .map(topic => (
                         <div key={topic.id} className='topic-div-rel'>
@@ -415,7 +423,6 @@ const handleVote = async (topicId, voteType) => {
 
                                         <div className="topic-item-body-detail">
                                             <div className="topic-item-body-detail-group">
-                                                {/* Detailed Results Button, visible to non-ROLE_PRESENTER users */}
                                                 {userInfo.role !== 'ROLE_PRESENTER' && (
                                                     <div className="command-buttons">
                                                         <a
@@ -463,7 +470,6 @@ const handleVote = async (topicId, voteType) => {
                                             )}
                                         </div>
 
-                                        {/* Edit and Delete controls, visible to ROLE_ADMIN users */}
                                         {userInfo.role === 'ROLE_ADMIN' && (
                                             <div className="topic-item-body-detail-group">
                                                 <div className="command-buttons">
@@ -490,7 +496,9 @@ const handleVote = async (topicId, voteType) => {
                                 </div>
                             </div>
                         </div>
-                    ))}
+                    )) ) : (
+                        <p>No topics available.</p>
+                    )}
                     <div className="mt-4">
                         {topics.length > 2 && userRole === 'ROLE_ADMIN' && (
                             <Link to={`/sessions/${id}/topics/add-form`}>
