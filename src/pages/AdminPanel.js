@@ -86,79 +86,84 @@ function AdminPanel() {
         navigate(`/admin-panel/edit/${user.username}`);
     };
 
-    return (
-        <div className="admin-panel-container">
-            <HelmetProvider>
-                <Helmet>
-                    <title>Админ Панел</title>
-                </Helmet>
-            </HelmetProvider>
-            <HeadLinks />
-            <Header userInfo={userData} />
+   return (
+    <div className="admin-panel-container">
+        <HelmetProvider>
+            <Helmet>
+                <title>Админ Панел</title>
+            </Helmet>
+        </HelmetProvider>
+        <HeadLinks />
+        <Header userInfo={userData} />
 
-            <div className="admin-body d-flex flex-column">
-                <div className="d-flex flex-row justify-content-between mb-4">
-                    <a href="/" className='a-tag-user-back-button'>
-                        <button className="user-back-button">Назад</button>
-                    </a>
-                    <h1 className="admin-title">Сите корисници</h1>
-                    <a href="/admin-panel/add-form">
-                        <button className="user-add-button">Додади корисник</button>
-                    </a>
-                </div>
-
-                <div className="admin-user-lists">
-                    {loading ? (
-                        <img src={`${process.env.PUBLIC_URL}/images/loading.svg`} alt="Loading..." />
-                    ) : users.length > 0 ? (
-                        <>
-                            <UserTable
-                                users={users.filter(user => user.role === 'ROLE_ADMIN')}
-                                title="Админи"
-                                bgColor="primary"
-                                onDeleteClick={handleDeleteClick}
-                                onEditClick={handleEditClick}
-                            />
-
-                            <UserTable
-                                users={users.filter(user => user.role === 'ROLE_USER')}
-                                title="Kорисници"
-                                bgColor="warning"
-                                onDeleteClick={handleDeleteClick}
-                                onEditClick={handleEditClick}
-                            />
-
-                            <UserTable
-                                users={users.filter(user => user.role === 'ROLE_SPECTATOR')}
-                                title="Набљудувачи"
-                                bgColor="secondary"
-                                onDeleteClick={handleDeleteClick}
-                                onEditClick={handleEditClick}
-                            />
-
-                            <UserTable
-                                users={users.filter(user => user.role === 'ROLE_PRESENTER')}
-                                title="Презентери"
-                                bgColor="info"
-                                onDeleteClick={handleDeleteClick}
-                                onEditClick={handleEditClick}
-                            />
-                        </>
-                    ) : (
-                        <p className="text-center mt-4">Нема достапни корисници.</p>
-                    )}
-                </div>
+        <div className="admin-body d-flex flex-column">
+            <div className="d-flex flex-row justify-content-between mb-4">
+                <a href="/" className='a-tag-user-back-button'>
+                    <button className="user-back-button">Назад</button>
+                </a>
+                <h1 className="admin-title">Сите корисници</h1>
+                <a href="/admin-panel/add-form">
+                    <button className="user-add-button">Додади корисник</button>
+                </a>
             </div>
 
-            <ConfirmModal
-                show={modalVisible}
-                onClose={handleModalClose}
-                onConfirm={handleDeleteConfirm}
-                userName={userToDelete ? userToDelete.username : ''}
-                errorMessage={errorMessage}
-            />
+            {/* Loading spinner outside of admin-user-lists */}
+            {loading && (
+                <div className="loading-spinner">
+                    <img src={`${process.env.PUBLIC_URL}/images/loading.svg`} alt="Loading..." />
+                </div>
+            )}
+
+            <div className="admin-user-lists">
+                {!loading && users.length > 0 ? (
+                    <>
+                        <UserTable
+                            users={users.filter(user => user.role === 'ROLE_ADMIN')}
+                            title="Админи"
+                            bgColor="primary"
+                            onDeleteClick={handleDeleteClick}
+                            onEditClick={handleEditClick}
+                        />
+
+                        <UserTable
+                            users={users.filter(user => user.role === 'ROLE_USER')}
+                            title="Kорисници"
+                            bgColor="warning"
+                            onDeleteClick={handleDeleteClick}
+                            onEditClick={handleEditClick}
+                        />
+
+                        <UserTable
+                            users={users.filter(user => user.role === 'ROLE_SPECTATOR')}
+                            title="Набљудувачи"
+                            bgColor="secondary"
+                            onDeleteClick={handleDeleteClick}
+                            onEditClick={handleEditClick}
+                        />
+
+                        <UserTable
+                            users={users.filter(user => user.role === 'ROLE_PRESENTER')}
+                            title="Презентери"
+                            bgColor="info"
+                            onDeleteClick={handleDeleteClick}
+                            onEditClick={handleEditClick}
+                        />
+                    </>
+                ) : !loading && (
+                    <p className="text-center mt-4">Нема достапни корисници.</p>
+                )}
+            </div>
         </div>
-    );
+
+        <ConfirmModal
+            show={modalVisible}
+            onClose={handleModalClose}
+            onConfirm={handleDeleteConfirm}
+            userName={userToDelete ? userToDelete.username : ''}
+            errorMessage={errorMessage}
+        />
+    </div>
+);
 }
 
 export default AdminPanel;
