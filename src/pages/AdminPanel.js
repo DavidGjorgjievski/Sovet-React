@@ -107,54 +107,53 @@ function AdminPanel() {
                 </a>
             </div>
 
-            {/* Loading spinner outside of admin-user-lists */}
             {loading && (
                 <div className="loading-spinner">
                     <img src={`${process.env.PUBLIC_URL}/images/loading.svg`} alt="Loading..." />
                 </div>
             )}
 
- {!loading && (
-            <div className="admin-user-lists">
-                {users.length > 0 ? (
-                    <>
-                        <UserTable
-                            users={users.filter(user => user.role === 'ROLE_ADMIN')}
-                            title="Админи"
-                            bgColor="primary"
-                            onDeleteClick={handleDeleteClick}
-                            onEditClick={handleEditClick}
-                        />
+            {!loading && (
+                        <div className="admin-user-lists">
+                            {users.length > 0 ? (
+                                <>
+                                    <UserTable
+                                        users={users.filter(user => user.role === 'ROLE_ADMIN')}
+                                        title="Админи"
+                                        bgColor="primary"
+                                        onDeleteClick={handleDeleteClick}
+                                        onEditClick={handleEditClick}
+                                    />
 
-                        <UserTable
-                            users={users.filter(user => user.role === 'ROLE_USER')}
-                            title="Kорисници"
-                            bgColor="warning"
-                            onDeleteClick={handleDeleteClick}
-                            onEditClick={handleEditClick}
-                        />
+                                    <UserTable
+                                        users={users.filter(user => user.role === 'ROLE_USER')}
+                                        title="Kорисници"
+                                        bgColor="warning"
+                                        onDeleteClick={handleDeleteClick}
+                                        onEditClick={handleEditClick}
+                                    />
 
-                        <UserTable
-                            users={users.filter(user => user.role === 'ROLE_SPECTATOR')}
-                            title="Набљудувачи"
-                            bgColor="secondary"
-                            onDeleteClick={handleDeleteClick}
-                            onEditClick={handleEditClick}
-                        />
+                                    <UserTable
+                                        users={users.filter(user => user.role === 'ROLE_SPECTATOR')}
+                                        title="Набљудувачи"
+                                        bgColor="secondary"
+                                        onDeleteClick={handleDeleteClick}
+                                        onEditClick={handleEditClick}
+                                    />
 
-                        <UserTable
-                            users={users.filter(user => user.role === 'ROLE_PRESENTER')}
-                            title="Презентери"
-                            bgColor="info"
-                            onDeleteClick={handleDeleteClick}
-                            onEditClick={handleEditClick}
-                        />
-                    </>
-                ) : (
-                    <p className="text-center mt-4">Нема достапни корисници.</p>
+                                    <UserTable
+                                        users={users.filter(user => user.role === 'ROLE_PRESENTER')}
+                                        title="Презентери"
+                                        bgColor="info"
+                                        onDeleteClick={handleDeleteClick}
+                                        onEditClick={handleEditClick}
+                                    />
+                                </>
+                            ) : (
+                                <p className="text-center mt-4">Нема достапни корисници.</p>
+                            )}
+                    </div>
                 )}
-            </div>
-        )}
         </div>
 
         <ConfirmModal
