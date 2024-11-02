@@ -6,8 +6,8 @@ import '../styles/AdminPanel.css';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import UserTable from '../components/UserTable';
-import ConfirmModal from '../components/ConfirmModal'; // Import the ConfirmModal
-import { initializeMobileMenu } from '../components/mobileMenu'; // Import the mobile menu
+import ConfirmModal from '../components/ConfirmModal'; 
+import { initializeMobileMenu } from '../components/mobileMenu'; 
 
 function AdminPanel() {
     const navigate = useNavigate();
@@ -17,6 +17,7 @@ function AdminPanel() {
     const [modalVisible, setModalVisible] = useState(false); 
     const [userToDelete, setUserToDelete] = useState(null); 
     const [errorMessage, setErrorMessage] = useState(null);
+    const [loading, setLoading] = useState(true); 
 
     useEffect(() => {
         const fetchUsers = async () => {
@@ -27,10 +28,11 @@ function AdminPanel() {
                             'Authorization': `Bearer ${token}`,
                         },
                     });
-
                     setUsers(response.data);
                 } catch (error) {
                     console.error("Error fetching users:", error);
+                } finally {
+                    setLoading(false); // Stop loading once data is fetched or error occurs
                 }
             } else {
                 navigate('/login');
@@ -67,18 +69,17 @@ function AdminPanel() {
 
             setModalVisible(false);
             setUserToDelete(null);
-            setErrorMessage(null); // Clear any previous error message
+            setErrorMessage(null);
         } catch (error) {
             console.error("Error deleting user:", error);
             setErrorMessage("Не може да се избрише корисникот затоа што е поврзан со други податоци.");
-            // Do not hide the modal to display the error message
         }
     };
 
     const handleModalClose = () => {
         setModalVisible(false);
         setUserToDelete(null); 
-        setErrorMessage(null); // Clear the error message when closing the modal
+        setErrorMessage(null);
     };
 
     const handleEditClick = (user) => {
@@ -107,38 +108,40 @@ function AdminPanel() {
                 </div>
 
                 <div className="admin-user-lists">
-                    {users.length > 0 ? (
+                    {loading ? (
+                        <img src={`${process.env.PUBLIC_URL}/images/loading.svg`} alt="Loading..." />
+                    ) : users.length > 0 ? (
                         <>
                             <UserTable
                                 users={users.filter(user => user.role === 'ROLE_ADMIN')}
                                 title="Админи"
                                 bgColor="primary"
-                                onDeleteClick={handleDeleteClick} // Pass the delete click handler
-                                onEditClick={handleEditClick} // Pass the edit click handler
+                                onDeleteClick={handleDeleteClick}
+                                onEditClick={handleEditClick}
                             />
 
                             <UserTable
                                 users={users.filter(user => user.role === 'ROLE_USER')}
                                 title="Kорисници"
                                 bgColor="warning"
-                                onDeleteClick={handleDeleteClick} // Pass the delete click handler
-                                onEditClick={handleEditClick} // Pass the edit click handler
+                                onDeleteClick={handleDeleteClick}
+                                onEditClick={handleEditClick}
                             />
 
                             <UserTable
                                 users={users.filter(user => user.role === 'ROLE_SPECTATOR')}
                                 title="Набљудувачи"
                                 bgColor="secondary"
-                                onDeleteClick={handleDeleteClick} // Pass the delete click handler
-                                onEditClick={handleEditClick} // Pass the edit click handler
+                                onDeleteClick={handleDeleteClick}
+                                onEditClick={handleEditClick}
                             />
 
                             <UserTable
                                 users={users.filter(user => user.role === 'ROLE_PRESENTER')}
                                 title="Презентери"
                                 bgColor="info"
-                                onDeleteClick={handleDeleteClick} // Pass the delete click handler
-                                onEditClick={handleEditClick} // Pass the edit click handler
+                                onDeleteClick={handleDeleteClick}
+                                onEditClick={handleEditClick}
                             />
                         </>
                     ) : (
@@ -147,13 +150,12 @@ function AdminPanel() {
                 </div>
             </div>
 
-            {/* Confirmation Modal */}
             <ConfirmModal
                 show={modalVisible}
                 onClose={handleModalClose}
                 onConfirm={handleDeleteConfirm}
                 userName={userToDelete ? userToDelete.username : ''}
-                errorMessage={errorMessage} // Pass the error message
+                errorMessage={errorMessage}
             />
         </div>
     );
