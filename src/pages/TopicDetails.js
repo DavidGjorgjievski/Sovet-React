@@ -13,10 +13,11 @@ function TopicDetails() {
         return storedUserInfo ? JSON.parse(storedUserInfo) : {};
     });
     const [topicDetails, setTopicDetails] = useState(null);
+    const [loading, setLoading] = useState(true); // Add loading state
     const jwtToken = localStorage.getItem('jwtToken') || '';
-
-    useEffect(() => {
+ useEffect(() => {
         const fetchTopicDetails = async () => {
+            setLoading(true); // Show loading before fetching data
             try {
                 const response = await fetch(`${process.env.REACT_APP_API_URL}/api/topics/details/${idt}`, {
                     method: 'GET',
@@ -32,6 +33,8 @@ function TopicDetails() {
                 setTopicDetails(data);
             } catch (error) {
                 console.error(error);
+            } finally {
+                setLoading(false); // Hide loading after data is fetched
             }
         };
 
@@ -55,8 +58,14 @@ function TopicDetails() {
                     <h1 className="topic-header-title">Детални резултати</h1>
                 </div>
 
-                {topicDetails && (
-                    <>
+                 
+                {loading ? ( 
+                    <div className="loading-spinner">
+                        <img src={`${process.env.PUBLIC_URL}/images/loading.svg`} alt="Loading..." />
+                    </div>
+                ) : (
+                    topicDetails && (
+                        <>
                         {topicDetails.yesUsers?.length > 0 && (
                             <div>
                                 <h2 className="d-flex justify-content-center m-3 detailed-table-header">Советници кои гласале за ({topicDetails.yesUsers.length}):</h2>
@@ -192,6 +201,7 @@ function TopicDetails() {
                             </div>
                         )}
                     </>
+                    )
                 )}
             </main>
         </div>
