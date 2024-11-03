@@ -230,7 +230,7 @@ const handleVote = async (topicId, voteType) => {
                  {userRole !== 'ROLE_PRESENTER' && (
                 <div className="topic-header">
                     <button
-                        className="back-button back-button-topics"
+                        className="back-button-topic"
                         onClick={() => navigate(`/sessions#session-${id}`)}
                     >
                         Назад

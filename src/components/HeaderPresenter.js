@@ -9,11 +9,12 @@ const HeaderPresenter = () => {
     return (
         <header>
             <div className='d-flex flex-start'>
-                <img
+                 <img
                     id="logo-img"
                     src={`${process.env.PUBLIC_URL}/images/logo.png`}
                     className="logo-img"
                     alt="Logo"
+                    onClick={() => window.location.reload()} 
                 />
                 <button 
                     className="back-button-presenter"
