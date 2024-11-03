@@ -167,7 +167,7 @@ function Sessions() {
                         sessions.map((session) => (
                             <div key={session.id} className="session-item">
                                 <span id={`session-${session.id}`} className='id-selector-session'></span>
-                                <img src="/images/image_session.jpg" alt="session" className="session-image" />
+                                <img src={`${process.env.PUBLIC_URL}/images/image_session.jpg`} alt="session" className="session-image" />
                                 <div className="session-info">
                                     <div className="session-text">
                                         <h2>{session.name}</h2>

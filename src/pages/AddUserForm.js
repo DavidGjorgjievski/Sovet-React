@@ -238,7 +238,7 @@ function AddUserForm() {
                             {/* Image Upload Section */}
                             <div className="form-group d-flex justify-content-center">
                                 <div className={`file-drop-area image-add-input ${fileError ? 'is-active' : ''}`}>
-                                    <p className="file-drop-message">
+                                    <p className="file-drop-message text-info-image-input">
                                         {formData.file ? (
                                             `Избрана датотека: ${fileName}` 
                                         ) : (
@@ -264,8 +264,8 @@ function AddUserForm() {
                                 </div>
                             )}
                             <div className="form-group d-flex justify-content-between mt-2"> 
-                                <button type="submit" className="btn btn-lg btn-primary"> Додади Корисник </button> 
-                                <button type="button" className="btn btn-danger btn-lg back-button-space" onClick={() => navigate('/admin-panel')}> Назад </button> 
+                                <button type="submit" className="btn btn-lg btn-primary  action-buttons"> Додади Корисник </button> 
+                                <button type="button" className="btn btn-danger btn-lg back-button-space action-buttons" onClick={() => navigate('/admin-panel')}> Назад </button> 
                             </div>
                         </form>
                     </div>

@@ -18,9 +18,9 @@ function Header({ userInfo }) { // Accept userInfo as a prop
             <nav>
                 <div className="d-flex flex-row">
                     <div>
-                        <img
+                       <img
                             id="logo-img"
-                            src="/images/logo.png" // Adjust path according to your setup
+                            src={`${process.env.PUBLIC_URL}/images/logo.png`}
                             className="logo-img"
                             alt="Logo"
                         />

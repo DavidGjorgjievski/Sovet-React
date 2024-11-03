@@ -11,8 +11,8 @@ const HeaderPresenter = () => {
             <div className='d-flex flex-start'>
                 <img
                     id="logo-img"
-                    src="/images/logo.png"
-                    className="logo-img-presenter"
+                    src={`${process.env.PUBLIC_URL}/images/logo.png`}
+                    className="logo-img"
                     alt="Logo"
                 />
                 <button 
