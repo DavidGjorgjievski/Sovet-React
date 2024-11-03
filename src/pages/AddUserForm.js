@@ -265,7 +265,7 @@ function AddUserForm() {
                             )}
                             <div className="form-group d-flex justify-content-between mt-2"> 
                                 <button type="submit" className="btn btn-lg btn-primary  action-buttons"> Додади Корисник </button> 
-                                <button type="button" className="btn btn-danger btn-lg back-button-space action-buttons" onClick={() => navigate('/admin-panel')}> Назад </button> 
+                                <button type="button" className="btn btn-danger btn-lg action-buttons" onClick={() => navigate('/admin-panel')}> Назад </button> 
                             </div>
                         </form>
                     </div>

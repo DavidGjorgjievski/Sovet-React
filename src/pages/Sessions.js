@@ -17,7 +17,6 @@ function Sessions() {
     
     useEffect(() => {
         const token = localStorage.getItem('jwtToken'); 
-        console.log('Token:', token);
 
         // Fetch sessions from the API
         const fetchSessions = async () => {
@@ -97,6 +96,23 @@ function Sessions() {
             }
         }
     };
+
+         useEffect(() => {
+    const hash = window.location.hash;
+    if (hash) {
+        const element = document.getElementById(hash.substring(1)); // Remove the '#' from the hash
+        if (element) {
+            // Timeout to allow the DOM to finish rendering
+            const timeoutId = setTimeout(() => {
+                element.scrollIntoView({ behavior: 'smooth' });
+                // Clear the hash from the URL after scrolling
+                window.history.replaceState(null, null, ' ');
+            }, 100); // Adjust the delay if necessary
+
+            return () => clearTimeout(timeoutId); // Clean up timeout
+        }
+    }
+}, [sessions]);
 
     const handleExportClick = async (sessionId, sessionName) => { 
         try {

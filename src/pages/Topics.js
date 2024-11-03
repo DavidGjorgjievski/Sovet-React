@@ -224,7 +224,7 @@ const handleVote = async (topicId, voteType) => {
            {userRole === 'ROLE_PRESENTER' ? (
                 <HeaderPresenter />
             ) : (
-                <Header userInfo={userInfo} />
+                <Header userInfo={userInfo} fetchTopics={fetchTopics} />
             )}
             <main className="topcis-container-body">
                  {userRole !== 'ROLE_PRESENTER' && (

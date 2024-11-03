@@ -4,6 +4,8 @@ import Header from '../components/Header';
 import HeadLinks from '../components/HeadLinks';
 import { useNavigate, useParams } from 'react-router-dom';
 import '../styles/TopicDetails.css';
+import { initializeMobileMenu } from '../components/mobileMenu';
+
 
 function TopicDetails() {
     const navigate = useNavigate();
@@ -40,6 +42,17 @@ function TopicDetails() {
 
         fetchTopicDetails();
     }, [navigate, id, idt, jwtToken]);
+
+
+    useEffect(() => {
+    // Initialize mobile menu
+    const cleanupMobileMenu = initializeMobileMenu();
+
+    // Cleanup function to remove event listeners or any other cleanup actions
+    return () => {
+      cleanupMobileMenu();
+    };
+  }, []);
 
     return (
         <div className="topic-details-container">

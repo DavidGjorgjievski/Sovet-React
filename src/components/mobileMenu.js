@@ -1,11 +1,6 @@
 export const initializeMobileMenu = () => {
-    const logoImg = document.getElementById('logo-img');
     const menuToggle = document.getElementById('mobile-menu-toggle');
     const mobileNav = document.getElementById('mobile-nav');
-
-    const handleLogoClick = () => {
-        window.location.reload();
-    };
 
     const toggleMobileMenu = (event) => {
         mobileNav.classList.toggle('show');
@@ -19,13 +14,10 @@ export const initializeMobileMenu = () => {
         }
     };
 
-    logoImg.addEventListener('click', handleLogoClick);
     menuToggle.addEventListener('click', toggleMobileMenu);
     document.addEventListener('click', closeMobileMenu);
 
-    // Return a cleanup function
     return () => {
-        logoImg.removeEventListener('click', handleLogoClick);
         menuToggle.removeEventListener('click', toggleMobileMenu);
         document.removeEventListener('click', closeMobileMenu);
     };

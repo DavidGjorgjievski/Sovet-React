@@ -1,8 +1,8 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom'; // Import Link from react-router-dom
 import '../styles/Header.css';
 
-function Header({ userInfo }) { // Accept userInfo as a prop
+function Header({ userInfo, fetchTopics = null }) {// Accept userInfo as a prop
     const [isMobileNavOpen, setMobileNavOpen] = useState(false);
 
     const toggleMobileMenu = () => {
@@ -12,6 +12,20 @@ function Header({ userInfo }) { // Accept userInfo as a prop
     const getActiveClass = (path) => {
         return window.location.pathname === path ? 'active' : '';
     };
+
+useEffect(() => {
+    const logoImg = document.getElementById('logo-img');
+    const handleClick = () => {
+        if (fetchTopics) {
+            fetchTopics();
+        } else {
+            window.location.reload();
+        }
+    };
+    logoImg.addEventListener('click', handleClick);
+
+    return () => logoImg.removeEventListener('click', handleClick);
+}, [fetchTopics]);
 
     return (
         <header>

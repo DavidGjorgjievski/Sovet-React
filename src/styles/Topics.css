@@ -370,6 +370,7 @@ html {
 
     .topic-button {
         width: 130px;
+        font-size: 12px !important;
     }
 
     .topic-item-body-detail div .text-for-rez {
@@ -394,7 +395,7 @@ html {
     }
 
     .topic-button {
-        width: 125px;
+        width: 140px;
     }
 }
 
@@ -449,6 +450,7 @@ html {
 
     .topic-button {
         font-size: 11px !important;
+        width: 125px;
     }
 
     .topic-item-body-detail .topic-item-body-detail-group {
@@ -480,7 +482,7 @@ html {
     }
 
     .topic-item-body-detail-group-chunk {
-        width: 110px;
+        width: 125px;
     }
 }
 
