@@ -1,18 +1,21 @@
 import React, { useEffect } from 'react';
 import '../styles/Logout.css'; 
 import { Helmet, HelmetProvider } from 'react-helmet-async';
+import { useAuth } from '../context/AuthContext'; 
 
 const Logout = () => {
+    const { logout } = useAuth(); 
 
     useEffect(() => {
-    const logoutUser = () => {
-        localStorage.removeItem('jwtToken');
-        localStorage.removeItem('userInfo');
-        console.log('Successfully logged out');
-    };
+        const logoutUser = () => {
+            localStorage.removeItem('userInfo');
+            logout(); 
+            console.log('Successfully logged out');
+        };
 
-    logoutUser();
-}, []);
+        logoutUser();
+    }, [logout]); 
+
     return (
         <div className="logout-container">
             <HelmetProvider>

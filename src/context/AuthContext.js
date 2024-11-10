@@ -5,29 +5,29 @@ const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
     const [isAuthenticated, setIsAuthenticated] = useState(false);
-    const [loading, setLoading] = useState(true); // Added loading state
+    const [loading, setLoading] = useState(true);
 
     useEffect(() => {
         const token = localStorage.getItem('jwtToken');
         if (token) {
             const decodedToken = jwtDecode(token);
-            const isExpired = decodedToken.exp * 1000 < Date.now(); // Check if the token is expired
+            const isExpired = decodedToken.exp * 1000 < Date.now(); 
             if (!isExpired) {
                 setIsAuthenticated(true);
             } else {
-                localStorage.removeItem('jwtToken'); // Remove expired token
+                localStorage.removeItem('jwtToken');
             }
         }
-        setLoading(false); // Set loading to false after checking
+        setLoading(false); 
     }, []);
 
     const login = (token) => {
-        localStorage.setItem('jwtToken', token); // Store the JWT in local storage
+        localStorage.setItem('jwtToken', token); 
         setIsAuthenticated(true);
     };
 
     const logout = () => {
-        localStorage.removeItem('jwtToken'); // Remove the token on logout
+        localStorage.removeItem('jwtToken'); 
         setIsAuthenticated(false);
     };
 
