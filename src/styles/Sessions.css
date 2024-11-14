@@ -28,6 +28,10 @@
     font-size: 2.125rem;
 }
 
+.session-header-title-user{
+    font-size: 2.125rem;
+}
+
 .session-button-container {
     min-width: 160px;
 }
@@ -57,7 +61,7 @@
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    margin-top: 20px;
+    margin-top: 10px;
 }
 
 .session-item {
@@ -109,7 +113,6 @@
         font-size: 1.5rem;
         margin-right: 20px;
     }
-
     .session-add-button {
         width: 150px;
         font-size: 13px;
@@ -143,36 +146,26 @@
 }
 
 @media (max-width: 370px) {
-    .session-header-title {
-        font-size: 1.5rem;
-        margin-right: 20px;
+    .session-header-title-user {
+            font-size: 1.9rem;
     }
-
     .session-item,
     .session-image {
         width: 325px;
     }
-
     .session-add-button {
         font-size: 13px;
     }
-
     .first-session-button {
         margin-right: 10px;
     }
 }
 
 @media (max-width: 340px) {
-    .session-header-title {
-        font-size: 1.5rem;
-        margin-right: 20px;
-    }
-
     .session-item,
     .session-image {
         width: 315px;
     }
-
     .session-add-button {
         font-size: 12px;
     }

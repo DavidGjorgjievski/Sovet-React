@@ -170,7 +170,7 @@ function Sessions() {
                     </div>
                 ) : (
                     <div className="session-header">
-                        <h1>Седници</h1>
+                        <p className="session-header-title-user">Седници</p>
                     </div>
                 )}
 

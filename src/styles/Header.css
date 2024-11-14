@@ -14,6 +14,7 @@ nav {
     flex-direction: row;
     justify-content: space-between;
     background-color: #57a8cc;
+    height: 80px;
     padding: 5px;
 }
 
