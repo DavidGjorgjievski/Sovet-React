@@ -10,22 +10,19 @@ import HeaderPresenter from '../components/HeaderPresenter';
 
 function Topics() {
     const [topics, setTopics] = useState([]);
-    const { id } = useParams(); 
+    const { id } = useParams();
     const [userRole, setUserRole] = useState(null);
-
-
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [selectedTopicId, setSelectedTopicId] = useState(null);
     const [selectedTopicTitle, setSelectedTopicTitle] = useState(null);
 
-
-     const openModal = (topicId,topicTitle) => {
-    setSelectedTopicId(topicId);
-    setSelectedTopicTitle(topicTitle)
-    setIsModalOpen(true); // Open the modal
+    const openModal = (topicId, topicTitle) => {
+        setSelectedTopicId(topicId);
+        setSelectedTopicTitle(topicTitle);
+        setIsModalOpen(true); // Open the modal
     };
 
-       const closeModal = () => {
+    const closeModal = () => {
         setIsModalOpen(false);
         setSelectedTopicId(null); // Clear the topic ID when closing
         setSelectedTopicTitle(null); // Clear the title as well
@@ -35,76 +32,86 @@ function Topics() {
     const token = localStorage.getItem('jwtToken');
     const navigate = useNavigate();
 
+    const fetchTopics = useCallback(async () => {
+        try {
+            const response = await fetch(`${process.env.REACT_APP_API_URL}/api/sessions/${id}/topics`, {
+                method: 'GET',
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                    'Content-Type': 'application/json'
+                }
+            });
 
-const fetchTopics = useCallback(async () => {
-    try {
-        const response = await fetch(`${process.env.REACT_APP_API_URL}/api/sessions/${id}/topics`, {
-            method: 'GET',
-            headers: {
-                'Authorization': `Bearer ${token}`,
-                'Content-Type': 'application/json'
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
             }
-        });
-
-        if (!response.ok) {
-            throw new Error('Network response was not ok');
+            const data = await response.json();
+            setTopics(data);
+        } catch (error) {
+            console.error('Error fetching topics:', error);
         }
-        const data = await response.json();
-        setTopics(data);
-    } catch (error) {
-        console.error('Error fetching topics:', error);
-    } 
-}, [id, token]);
+    }, [id, token]);
 
-
-useEffect(() => {
-    if (userInfo && userInfo.role) {
-        setUserRole(userInfo.role);
-    }
-
-    fetchTopics();
-    const cleanupMobileMenu = initializeMobileMenu();
-    return () => cleanupMobileMenu();
-}, [token, userInfo, fetchTopics, id]);
-
-const handleDelete = async () => {
-    const jwtToken = localStorage.getItem('jwtToken');
-    try {
-        const response = await fetch(`${process.env.REACT_APP_API_URL}/api/topics/${selectedTopicId}`, {
-            method: 'DELETE',
-            headers: {
-                'Authorization': `Bearer ${jwtToken}`,
-                'Content-Type': 'application/json'
-            },
-        });
-
-        if (response.ok) {
-            closeModal();
-            await fetchTopics(); // Re-fetch topics immediately after deletion
-        } else {
-            console.error('Failed to delete the topic');
+    useEffect(() => {
+        if (userInfo && userInfo.role) {
+            setUserRole(userInfo.role);
         }
-    } catch (error) {
-        console.error('Error:', error);
-    }
-};
 
-     useEffect(() => {
-    const hash = window.location.hash;
-    if (hash) {
-        const element = document.getElementById(hash.substring(1)); // Remove the '#' from the hash
-        if (element) {
-            // Timeout to allow the DOM to finish rendering
-            const timeoutId = setTimeout(() => {
-                element.scrollIntoView({ behavior: 'smooth' });
-                // Clear the hash from the URL after scrolling
-                window.history.replaceState(null, null, ' ');
-            }, 100); // Adjust the delay if necessary
+        fetchTopics();
+        const cleanupMobileMenu = initializeMobileMenu();
+        return () => cleanupMobileMenu();
+    }, [token, userInfo, fetchTopics, id]);
 
-            return () => clearTimeout(timeoutId); // Clean up timeout
+    useEffect(() => {
+        let intervalId;
+
+        if (userRole === 'ROLE_PRESENTER') {
+            // Fetch topics every 1.5 seconds if user is a presenter
+            intervalId = setInterval(fetchTopics, 1500);
         }
-    }
-}, [topics]);
+
+        // Cleanup the interval when component unmounts or role changes
+        return () => clearInterval(intervalId);
+    }, [userRole, fetchTopics]);
+
+    const handleDelete = async () => {
+        const jwtToken = localStorage.getItem('jwtToken');
+        try {
+            const response = await fetch(`${process.env.REACT_APP_API_URL}/api/topics/${selectedTopicId}`, {
+                method: 'DELETE',
+                headers: {
+                    'Authorization': `Bearer ${jwtToken}`,
+                    'Content-Type': 'application/json'
+                },
+            });
+
+            if (response.ok) {
+                closeModal();
+                await fetchTopics(); // Re-fetch topics immediately after deletion
+            } else {
+                console.error('Failed to delete the topic');
+            }
+        } catch (error) {
+            console.error('Error:', error);
+        }
+    };
+
+    useEffect(() => {
+        const hash = window.location.hash;
+        if (hash) {
+            const element = document.getElementById(hash.substring(1)); // Remove the '#' from the hash
+            if (element) {
+                // Timeout to allow the DOM to finish rendering
+                const timeoutId = setTimeout(() => {
+                    element.scrollIntoView({ behavior: 'smooth' });
+                    // Clear the hash from the URL after scrolling
+                    window.history.replaceState(null, null, ' ');
+                }, 100); // Adjust the delay if necessary
+
+                return () => clearTimeout(timeoutId); // Clean up timeout
+            }
+        }
+    }, [topics]);
 
     // Determine if the user can vote
     const canVote = userRole === 'ROLE_ADMIN' || userRole === 'ROLE_USER';
@@ -134,83 +141,83 @@ const handleDelete = async () => {
     };
 
     const startVoting = async (topicId, token) => {
-    try {
-        const response = await fetch(`${process.env.REACT_APP_API_URL}/api/topics/active/${topicId}`, {
-            method: 'GET',
-            headers: {
-                'Authorization': `Bearer ${token}`,
-                'Content-Type': 'application/json',
-            },
-        });
-        if (!response.ok) {
-            throw new Error('Failed to start voting.');
+        try {
+            const response = await fetch(`${process.env.REACT_APP_API_URL}/api/sessions/${id}/topics/active/${topicId}`, {
+                method: 'GET',
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                    'Content-Type': 'application/json',
+                },
+            });
+            if (!response.ok) {
+                throw new Error('Failed to start voting.');
+            }
+            console.log('Voting started successfully');
+            // You can refresh data or trigger other effects here if needed
+            await fetchTopics();
+        } catch (error) {
+            console.error('Error:', error);
         }
-        console.log('Voting started successfully');
-        // You can refresh data or trigger other effects here if needed
-        await fetchTopics();
-    } catch (error) {
-        console.error('Error:', error);
-    }
-};
+    };
 
-const finishVoting = async (topicId, token) => {
-    try {
-        const response = await fetch(`${process.env.REACT_APP_API_URL}/api/topics/finish/${topicId}`, {
-            method: 'GET',
-            headers: {
-                'Authorization': `Bearer ${token}`,
-                'Content-Type': 'application/json',
-            },
-        });
-        if (!response.ok) {
-            throw new Error('Failed to finish voting.');
+    const finishVoting = async (topicId, token) => {
+        try {
+            const response = await fetch(`${process.env.REACT_APP_API_URL}/api/sessions/${id}/topics/finish/${topicId}`, {
+                method: 'GET',
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                    'Content-Type': 'application/json',
+                },
+            });
+            if (!response.ok) {
+                throw new Error('Failed to finish voting.');
+            }
+            await fetchTopics();
+            console.log('Voting finished successfully');
+            // Trigger additional effects here if needed
+        } catch (error) {
+            console.error('Error:', error);
         }
-        await fetchTopics();
-        console.log('Voting finished successfully');
-        // Trigger additional effects here if needed
-    } catch (error) {
-        console.error('Error:', error);
-    }
-};
+    };
 
-const restartVoting = async (topicId, token) => {
-    try {
-        const response = await fetch(`${process.env.REACT_APP_API_URL}/api/topics/create/${topicId}`, {
-            method: 'GET',
-            headers: {
-                'Authorization': `Bearer ${token}`,
-                'Content-Type': 'application/json',
-            },
-        });
-        if (!response.ok) {
-            throw new Error('Failed to restart voting.');
+    const restartVoting = async (topicId, token) => {
+        try {
+            const response = await fetch(`${process.env.REACT_APP_API_URL}/api/topics/create/${topicId}`, {
+                method: 'GET',
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                    'Content-Type': 'application/json',
+                },
+            });
+            if (!response.ok) {
+                throw new Error('Failed to restart voting.');
+            }
+            console.log('Voting restarted successfully');
+            // Trigger additional effects here if needed
+            await fetchTopics();
+        } catch (error) {
+            console.error('Error:', error);
         }
-        console.log('Voting restarted successfully');
-        // Trigger additional effects here if needed
-        await fetchTopics();
-    } catch (error) {
-        console.error('Error:', error);
-    }
-};
+    };
 
-const handleVote = async (topicId, voteType) => {
-    try {
-        const response = await fetch(`${process.env.REACT_APP_API_URL}/api/topics/${voteType}/${topicId}`, {
-            method: 'GET',
-            headers: {
-                'Authorization': `Bearer ${token}`,
-                'Content-Type': 'application/json',
-            },
-        });
-        if (!response.ok) {
-            throw new Error(`Failed to vote: ${voteType}`);
+    const handleVote = async (topicId, voteType) => {
+        try {
+            const response = await fetch(`${process.env.REACT_APP_API_URL}/api/topics/${voteType}/${topicId}`, {
+                method: 'GET',
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                    'Content-Type': 'application/json',
+                },
+            });
+            if (!response.ok) {
+                throw new Error(`Failed to vote: ${voteType}`);
+            }
+            console.log(`${voteType} vote submitted successfully`);
+            await fetchTopics();
+        } catch (error) {
+            console.error('Error:', error);
         }
-        console.log(`${voteType} vote submitted successfully`);
-        await fetchTopics()
-    } catch (error) {
-        console.error('Error:', error);
-    }
-};
+    };
     
 
     return (
