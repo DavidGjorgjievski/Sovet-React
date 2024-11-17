@@ -28,28 +28,23 @@ function App() {
             <Routes>
               {/* Public routes */}
               <Route path="/login" element={<Login />} />
-              
+              <Route path="/logout" element={<Logout />} />
+
               {/* Protected routes */}
               <Route path="/" element={<ProtectedRoute element={<Home />} />} />
               <Route path="/profile" element={<ProtectedRoute element={<Profile />} />} />
-              <Route path="/profile/change-password-form"  element={<ChangePassword />} />
-              <Route path="/profile/change-image-form"  element={<ChangeImage />} />
-              <Route path="/admin-panel"  element={<AdminPanel />} />
-              <Route path="/admin-panel/add-form"  element={<AddUserForm />} />
-              <Route path="/admin-panel/edit/:username?" element={<EditUserForm />} />
-              <Route path="/sessions"  element={<Sessions />} />
-              <Route path="/sessions/add-form"  element={<AddSessionForm />} />
-              <Route path="/sessions/edit/:id?"  element={<AddSessionForm />} />
-              <Route path="/sessions/:id?/topics"  element={<Topics />} />
-              <Route path="/sessions/:id?/topics/add-form"  element={<AddTopicForm />} />
-              <Route path="/sessions/:id?/topics/edit/:idt"  element={<AddTopicForm />} />
-              <Route path="/sessions/:id?/topics/details/:idt"  element={<TopicDetails />} />
-              
-
-
-
-              {/* Logout route */}
-              <Route path="/logout" element={<Logout />} />
+              <Route path="/profile/change-password-form" element={<ProtectedRoute element={<ChangePassword />} />} />
+              <Route path="/profile/change-image-form" element={<ProtectedRoute element={<ChangeImage />} />} />
+              <Route path="/admin-panel" element={<ProtectedRoute element={<AdminPanel />} />} />
+              <Route path="/admin-panel/add-form" element={<ProtectedRoute element={<AddUserForm />} />} />
+              <Route path="/admin-panel/edit/:username?" element={<ProtectedRoute element={<EditUserForm />} />} />
+              <Route path="/sessions" element={<ProtectedRoute element={<Sessions />} />} />
+              <Route path="/sessions/add-form" element={<ProtectedRoute element={<AddSessionForm />} />} />
+              <Route path="/sessions/edit/:id?" element={<ProtectedRoute element={<AddSessionForm />} />} />
+              <Route path="/sessions/:id?/topics" element={<ProtectedRoute element={<Topics />} />} />
+              <Route path="/sessions/:id?/topics/add-form" element={<ProtectedRoute element={<AddTopicForm />} />} />
+              <Route path="/sessions/:id?/topics/edit/:idt" element={<ProtectedRoute element={<AddTopicForm />} />} />
+              <Route path="/sessions/:id?/topics/details/:idt" element={<ProtectedRoute element={<TopicDetails />} />} />
             </Routes>
           </div>
         </Router>

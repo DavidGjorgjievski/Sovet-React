@@ -26,40 +26,39 @@ function Login() {
         }
     }, [isAuthenticated, navigate]);
 
-    const handleLogin = async (e) => {
-        e.preventDefault();
-        setLoading(true); 
+   const handleLogin = async (e) => {
+    e.preventDefault();
+    setLoading(true);
 
-        try {
-            const response = await fetch(process.env.REACT_APP_API_URL + '/api/login', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({ username, password }),
-            });
+    try {
+        const response = await fetch(process.env.REACT_APP_API_URL + '/api/login', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ username, password }),
+        });
 
-            if (!response.ok) {
-                const errorText = await response.text();
-                setError('Невалидно корисничко име или лозинка.'); 
-                throw new Error(`Login failed: ${errorText}`);
-            }
-
-            const data = await response.json();
-            const token = data.token; 
-
-            localStorage.setItem('jwtToken', token);
-
-            login(token); 
-            
-            navigate('/'); 
-        } catch (error) {
-            console.error('Error:', error);
-            setError('Невалидно корисничко име или лозинка.'); 
-        } finally {
-            setLoading(false); 
+        if (!response.ok) {
+            const errorText = await response.text();
+            setError('Невалидно корисничко име или лозинка.');
+            throw new Error(`Login failed: ${errorText}`);
         }
-    };
+
+        const data = await response.json();
+        const { token, userInfo } = data;
+
+        localStorage.setItem('jwtToken', token);
+        localStorage.setItem('userInfo', JSON.stringify(userInfo));
+        login(token); 
+        navigate('/');
+    } catch (error) {
+        console.error('Error:', error);
+        setError('Невалидно корисничко име или лозинка.');
+    } finally {
+        setLoading(false);
+    }
+};
 
     return (
         <div className="login-container">
