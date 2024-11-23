@@ -12,12 +12,16 @@ function Login() {
     const [error, setError] = useState('');
     const [loading, setLoading] = useState(false); 
 
+  
+
     useEffect(() => {
-        const token = localStorage.getItem('jwtToken');
-        if (token) {
-            login(token); 
-        }
-    }, [login]); 
+    const token = localStorage.getItem('jwtToken');
+    const userInfo = localStorage.getItem('userInfo');
+    if (token && userInfo) {
+        const parsedUserInfo = JSON.parse(userInfo); // Parse the string back into an object
+        login(token, parsedUserInfo); 
+    }
+}, [login]);
 
    
     useEffect(() => {
@@ -47,7 +51,8 @@ function Login() {
 
         const data = await response.json();
         const { token, userInfo } = data;
-        login(token,JSON.stringify(userInfo)); 
+        const role = userInfo.role
+        login(token,JSON.stringify(userInfo),role); 
         navigate('/');
     } catch (error) {
         console.error('Error:', error);

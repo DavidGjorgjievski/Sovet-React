@@ -18,6 +18,7 @@ import AddSessionForm from './pages/AddSessionForm';
 import Topics from './pages/Topics';
 import AddTopicForm from './pages/AddTopicForm';
 import TopicDetails from './pages/TopicDetails';
+import Unauthorized from './pages/Unauthorized';
 
 function App() {
   return (
@@ -29,21 +30,51 @@ function App() {
               {/* Public routes */}
               <Route path="/login" element={<Login />} />
               <Route path="/logout" element={<Logout />} />
+              <Route path="/unauthorized" element={<Unauthorized />} />
 
               {/* Protected routes */}
               <Route path="/" element={<ProtectedRoute element={<Home />} />} />
               <Route path="/profile" element={<ProtectedRoute element={<Profile />} />} />
               <Route path="/profile/change-password-form" element={<ProtectedRoute element={<ChangePassword />} />} />
               <Route path="/profile/change-image-form" element={<ProtectedRoute element={<ChangeImage />} />} />
-              <Route path="/admin-panel" element={<ProtectedRoute element={<AdminPanel />} />} />
-              <Route path="/admin-panel/add-form" element={<ProtectedRoute element={<AddUserForm />} />} />
-              <Route path="/admin-panel/edit/:username?" element={<ProtectedRoute element={<EditUserForm />} />} />
+
+              {/* Admin-only routes */}
+              <Route
+                path="/admin-panel"
+                element={<ProtectedRoute element={<AdminPanel />} allowedRoles={['ROLE_ADMIN']} />}
+              />
+              <Route
+                path="/admin-panel/add-form"
+                element={<ProtectedRoute element={<AddUserForm />} allowedRoles={['ROLE_ADMIN']} />}
+              />
+              <Route
+                path="/admin-panel/edit/:username?"
+                element={<ProtectedRoute element={<EditUserForm />} allowedRoles={['ROLE_ADMIN']} />}
+              />
+
+              <Route 
+                path="/sessions/add-form" 
+                element={<ProtectedRoute element={<AddSessionForm />} allowedRoles={['ROLE_ADMIN']} />} 
+              />
+
+              <Route 
+                path="/sessions/edit/:id?" 
+                element={<ProtectedRoute element={<AddSessionForm />} allowedRoles={['ROLE_ADMIN']} />} 
+              />
+
+              <Route 
+                path="/sessions/:id?/topics/add-form"
+                element={<ProtectedRoute element={<AddTopicForm />} allowedRoles={['ROLE_ADMIN']} />} 
+              />
+
+              <Route 
+                path="/sessions/:id?/topics/edit/:idt" 
+                element={<ProtectedRoute element={<AddTopicForm />} allowedRoles={['ROLE_ADMIN']} />} 
+              />
+
+              {/* Other protected routes */}
               <Route path="/sessions" element={<ProtectedRoute element={<Sessions />} />} />
-              <Route path="/sessions/add-form" element={<ProtectedRoute element={<AddSessionForm />} />} />
-              <Route path="/sessions/edit/:id?" element={<ProtectedRoute element={<AddSessionForm />} />} />
               <Route path="/sessions/:id?/topics" element={<ProtectedRoute element={<Topics />} />} />
-              <Route path="/sessions/:id?/topics/add-form" element={<ProtectedRoute element={<AddTopicForm />} />} />
-              <Route path="/sessions/:id?/topics/edit/:idt" element={<ProtectedRoute element={<AddTopicForm />} />} />
               <Route path="/sessions/:id?/topics/details/:idt" element={<ProtectedRoute element={<TopicDetails />} />} />
             </Routes>
           </div>
