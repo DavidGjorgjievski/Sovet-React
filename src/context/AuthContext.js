@@ -21,13 +21,15 @@ export const AuthProvider = ({ children }) => {
         setLoading(false); 
     }, []);
 
-    const login = (token) => {
+    const login = (token,userInfo) => {
         localStorage.setItem('jwtToken', token); 
+        localStorage.setItem('userInfo', userInfo); 
         setIsAuthenticated(true);
     };
 
     const logout = () => {
         localStorage.removeItem('jwtToken'); 
+        localStorage.removeItem('userInfo'); 
         setIsAuthenticated(false);
     };
 

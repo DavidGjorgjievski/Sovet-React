@@ -6,14 +6,8 @@ import { useAuth } from '../context/AuthContext';
 const Logout = () => {
     const { logout } = useAuth(); 
 
-    useEffect(() => {
-        const logoutUser = () => {
-            localStorage.removeItem('userInfo');
-            logout(); 
-            console.log('Successfully logged out');
-        };
-
-        logoutUser();
+     useEffect(() => {
+        logout(); 
     }, [logout]); 
 
     return (

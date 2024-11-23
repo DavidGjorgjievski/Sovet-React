@@ -47,10 +47,7 @@ function Login() {
 
         const data = await response.json();
         const { token, userInfo } = data;
-
-        localStorage.setItem('jwtToken', token);
-        localStorage.setItem('userInfo', JSON.stringify(userInfo));
-        login(token); 
+        login(token,JSON.stringify(userInfo)); 
         navigate('/');
     } catch (error) {
         console.error('Error:', error);
