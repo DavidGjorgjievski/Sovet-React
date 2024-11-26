@@ -5,6 +5,9 @@ import HeadLinks from '../components/HeadLinks';
 import { useNavigate } from 'react-router-dom';
 import { initializeMobileMenu } from '../components/mobileMenu'; 
 import '../styles/AddUserForm.css';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faEye, faEyeSlash } from '@fortawesome/free-solid-svg-icons';
+
 
 function AddUserForm() {
     const navigate = useNavigate();
@@ -32,6 +35,9 @@ function AddUserForm() {
     const [fileSizeError, setFileSizeError] = useState(false);
     const roles = ["ROLE_ADMIN", "ROLE_USER", "ROLE_SPECTATOR", "ROLE_PRESENTER"];
     const statuses = ["ACTIVE", "INACTIVE"];
+
+    const [showPassword, setShowPassword] = useState(false);
+    const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
     useEffect(() => {
         const cleanupMobileMenu = initializeMobileMenu();
@@ -75,52 +81,61 @@ function AddUserForm() {
         }
     };
 
-    const handleSubmit = async (e) => {
-        e.preventDefault();
+     const handleSubmit = async (e) => {
+    e.preventDefault();
 
-        if (formData.password !== confirmPassword) {
-            setPasswordError(true);
-            return;
+    // Trim spaces from the username and convert to lowercase
+    const trimmedUsername = formData.username.trim().toLowerCase();
+
+    // Trim spaces from the password
+    const trimmedPassword = formData.password.trim();
+
+    // Validate if password matches confirm password
+    if (formData.password !== confirmPassword) {
+        setPasswordError(true);
+        return;
+    }
+
+    if (fileError || fileSizeError) {
+        // If there are any file errors, do not proceed
+        return;
+    }
+
+    setPasswordError(false);
+
+    const submissionData = new FormData();
+    submissionData.append('username', trimmedUsername);  // Use the trimmed username
+    submissionData.append('name', formData.name);
+    submissionData.append('surname', formData.surname);
+    submissionData.append('password', trimmedPassword);
+    submissionData.append('role', formData.role);
+    submissionData.append('status', formData.status);
+    if (formData.file) {
+        submissionData.append('file', formData.file);
+    }
+
+    try {
+        const response = await fetch(process.env.REACT_APP_API_URL + "/api/admin/add", {
+            method: 'POST',
+            headers: {
+                'Authorization': `Bearer ${token}`,
+            },
+            body: submissionData,
+        });
+
+        if (response.ok) {
+            console.log('User added successfully');
+            navigate('/admin-panel');
+        } else {
+            const errorMessage = await response.text();
+            console.error('Failed to add user:', errorMessage);
+            alert(errorMessage); 
         }
+    } catch (error) {
+        console.error('Error submitting form:', error);
+    }
+};
 
-
-        if (fileError || fileSizeError) {
-            // If there are any file errors, do not proceed
-            return;
-        }
-
-        setPasswordError(false);
-
-        const submissionData = new FormData();
-        submissionData.append('username', formData.username);
-        submissionData.append('name', formData.name);
-        submissionData.append('surname', formData.surname);
-        submissionData.append('password', formData.password);
-        submissionData.append('role', formData.role);
-        submissionData.append('status', formData.status);
-        if (formData.file) {
-            submissionData.append('file', formData.file);
-        }
-
-        try {
-            const response = await fetch(process.env.REACT_APP_API_URL + "/api/admin/add", {
-                method: 'POST',
-                headers: {
-                    'Authorization': `Bearer ${token}`,
-                },
-                body: submissionData,
-            });
-
-            if (response.ok) {
-                console.log('User added successfully');
-                navigate('/admin-panel');
-            } else {
-                console.error('Failed to add user');
-            }
-        } catch (error) {
-            console.error('Error submitting form:', error);
-        }
-    };
 
     return (
         <div className="add-user-form-container">
@@ -178,29 +193,43 @@ function AddUserForm() {
                             </div>
                             <div className="form-group">
                                 <label htmlFor="password" className="label-add">Лозинка:</label>
-                                <input
-                                    type="password"
-                                    className="form-control form-control-lg mb-2"
-                                    id="password"
-                                    name="password"
-                                    value={formData.password}
-                                    onChange={handleInputChange}
-                                    required
-                                    placeholder="Внеси лозинка"
-                                />
+                                <div className='d-flex flex-row'> 
+                                    <input
+                                        type={showPassword ? "text" : "password"}
+                                        className="form-control form-control-lg mb-2"
+                                        id="password"
+                                        name="password"
+                                        value={formData.password}
+                                        onChange={handleInputChange}
+                                        required
+                                        placeholder="Внеси лозинка"
+                                    />
+                                    <FontAwesomeIcon
+                                        icon={showPassword ? faEyeSlash : faEye}
+                                        className='eye-icon'
+                                        onClick={() => setShowPassword(!showPassword)}
+                                    />
+                                </div>
                             </div>
-                            <div className="form-group">
+                             <div className="form-group">
                                 <label htmlFor="confirmPassword" className="label-add">Потврди Лозинка:</label>
+                                <div className="d-flex flex-row justify-content-center">
                                 <input
-                                    type="password"
+                                    type={showConfirmPassword ? "text" : "password"}
                                     className="form-control form-control-lg mb-2"
                                     id="confirmPassword"
                                     name="confirmPassword"
-                                    value={confirmPassword}
+                                    value={formData.confirmPassword}
                                     onChange={handleInputChange}
                                     required
                                     placeholder="Потврди лозинка"
                                 />
+                                <FontAwesomeIcon
+                                    icon={showConfirmPassword ? faEyeSlash : faEye}
+                                    className='eye-icon'
+                                    onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                                />
+                                </div>
                             </div>
                         
                             <div className="form-group mb-2">

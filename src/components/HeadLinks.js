@@ -9,7 +9,9 @@ function HeadLinks() {
                 integrity="sha384-9ndCyUaIbzAi2FUVXJi0CjmCapSmO7SnpJef0486qhLnuZ2cdeRhO02iuK6FUUVM"
                 crossorigin="anonymous"
             />
+           
             <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
             <script
                 src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"
                 integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r"
@@ -28,6 +30,7 @@ function HeadLinks() {
                 crossorigin="anonymous"
                 defer
             ></script>
+
         </Helmet>
     );
 }
