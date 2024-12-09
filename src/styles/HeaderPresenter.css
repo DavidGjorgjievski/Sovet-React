@@ -20,6 +20,8 @@
 
 .logo-img-presenter {
     width: 50px;
+    object-fit: cover;
     cursor: pointer;
     margin-left: 5px;
+    margin-top: 5px;
 }

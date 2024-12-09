@@ -34,7 +34,7 @@ useEffect(() => {
                     <div>
                        <img
                             id="logo-img"
-                            src={`${process.env.PUBLIC_URL}/images/logo.png`}
+                            src={`${process.env.PUBLIC_URL}/images/grb.png`}
                             className="logo-img"
                             alt="Logo"
                         />
