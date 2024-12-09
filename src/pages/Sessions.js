@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { useParams } from 'react-router-dom';
 import { Helmet, HelmetProvider } from 'react-helmet-async';
 import '../styles/Sessions.css'; 
 import Header from '../components/Header';
@@ -11,6 +12,7 @@ function Sessions() {
     const [showModal, setShowModal] = useState(false);
     const [selectedSession, setSelectedSession] = useState(null);
     const [loading, setLoading] = useState(true); // Step 1: Add loading state
+    const { municipalityId } = useParams();
 
     // Retrieve userInfo from local storage
     const userInfo = JSON.parse(localStorage.getItem('userInfo')) || {};
@@ -22,7 +24,7 @@ function Sessions() {
         const fetchSessions = async () => {
             setLoading(true); // Start loading
             try {
-                const response = await fetch(process.env.REACT_APP_API_URL + '/api/sessions', {
+                const response = await fetch(`${process.env.REACT_APP_API_URL}/api/municipalities/${municipalityId}/sessions`, {
                     method: 'GET',
                     headers: {
                         'Authorization': `Bearer ${token}`,
@@ -50,7 +52,7 @@ function Sessions() {
         return () => {
             cleanupMobileMenu(); 
         };
-    }, []);
+    }, [municipalityId]);
 
     // Scroll to the session based on the URL hash
     useEffect(() => {
@@ -159,11 +161,11 @@ function Sessions() {
             <HeadLinks />
             <Header userInfo={userInfo} /> 
             <main className="session-body-container">
-                {userInfo.role === 'ROLE_ADMIN' ? (
+                {userInfo.role === 'ROLE_PRESIDENT' ? (
                     <div className="session-header">
                         <p className="session-header-title">Седници</p>
                         <div className="session-button-container">
-                            <a href="/sessions/add-form">
+                            <a href={`/municipalities/${municipalityId}/sessions/add-form`}>
                                 <button className="session-add-button">Додади Седница</button>
                             </a>
                         </div>
@@ -193,7 +195,7 @@ function Sessions() {
                                         <div className="d-flex flex-row">
                                             <div>
                                                 <div className="first-session-button">
-                                                    <a href={`/sessions/${session.id}/topics`} className="btn btn-sm btn-info session-button-size">
+                                                    <a href={`/municipalities/${municipalityId}/sessions/${session.id}/topics`} className="btn btn-sm btn-info session-button-size">
                                                         Преглед на точки
                                                     </a>
                                                 </div>
@@ -210,11 +212,11 @@ function Sessions() {
                                                 </div>
                                             )}
                                         </div>
-                                        {userInfo.role === 'ROLE_ADMIN' && ( 
+                                        {userInfo.role === 'ROLE_PRESIDENT' && ( 
                                             <div>
                                                 <div className="d-flex align-items-center session-buttons">
                                                     <div className="first-session-button">
-                                                        <a href={`/sessions/edit/${session.id}`} className="btn btn-sm btn-warning session-button-size">
+                                                        <a href={`/municipalities/${municipalityId}/sessions/edit/${session.id}`} className="btn btn-sm btn-warning session-button-size">
                                                             Уреди
                                                         </a>
                                                     </div>

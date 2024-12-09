@@ -126,8 +126,16 @@ function AdminPanel() {
                                     />
 
                                     <UserTable
+                                        users={users.filter(user => user.role === 'ROLE_PRESIDENT')}
+                                        title="Претседатели"
+                                        bgColor="danger"
+                                        onDeleteClick={handleDeleteClick}
+                                        onEditClick={handleEditClick}
+                                    />
+
+                                    <UserTable
                                         users={users.filter(user => user.role === 'ROLE_USER')}
-                                        title="Kорисници"
+                                        title="Советници"
                                         bgColor="warning"
                                         onDeleteClick={handleDeleteClick}
                                         onEditClick={handleEditClick}

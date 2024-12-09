@@ -10,6 +10,7 @@ import { initializeMobileMenu } from '../components/mobileMenu';
 function TopicDetails() {
     const navigate = useNavigate();
     const { id, idt } = useParams();
+    const { municipalityId } = useParams();
     const [userData] = useState(() => {
         const storedUserInfo = localStorage.getItem('userInfo');
         return storedUserInfo ? JSON.parse(storedUserInfo) : {};
@@ -66,7 +67,7 @@ function TopicDetails() {
             <main className='topic-details-body-container'>
                 <div className="detailed-result-header">
                     <div className="detailed-result-button-container">
-                        <button onClick={() => navigate(`/sessions/${id}/topics#topic-${idt}`)} className="back-button">Назад</button>
+                        <button onClick={() => navigate(`/municipalities/${municipalityId}/sessions/${id}/topics#topic-${idt}`)} className="back-button">Назад</button>
                     </div>
                     <h1 className="topic-header-title">Детални резултати</h1>
                 </div>

@@ -43,7 +43,7 @@ useEffect(() => {
                     {/* Desktop Navigation */}
                     <ul className="nav-item" id="desktop-nav">
                         <li className={getActiveClass('/')}><Link to="/">Почетна</Link></li>
-                        <li className={getActiveClass('/sessions')}><Link to="/sessions">Седници</Link></li>
+                        <li className={getActiveClass('/municipalities')}><Link to="/municipalities">Општини</Link></li>
                         <li className={getActiveClass('/admin-panel')} style={{ display: userInfo.role === 'ROLE_ADMIN' ? 'block' : 'none' }}>
                             <Link to="/admin-panel">Админ панел</Link>
                         </li>
@@ -57,7 +57,7 @@ useEffect(() => {
                     </div>
                     <ul className={`nav-item-mobile ${isMobileNavOpen ? 'open' : ''}`} id="mobile-nav">
                         <li><Link to="/">Почетна</Link></li>
-                        <li><Link to="/sessions">Седници</Link></li>
+                        <li><Link to="/municipalities">Општини</Link></li>
                         <li style={{ display: userInfo.role === 'ROLE_ADMIN' ? 'block' : 'none' }}>
                             <Link to="/admin-panel">Админ панел</Link>
                         </li>

@@ -5,7 +5,11 @@ function UserTable({ users, title, bgColor, onDeleteClick, onEditClick }) {
         <tr key={user.username}>
             <td>
                 {user.image && (
-                    <img src={`data:image/jpeg;base64,${user.image}`} alt={`${user.name} ${user.surname}`} className="user-admin-img" />
+                    <img
+                        src={`data:image/jpeg;base64,${user.image}`}
+                        alt={`${user.name} ${user.surname}`}
+                        className="user-admin-img"
+                    />
                 )}
             </td>
             <td>{user.username}</td>
@@ -13,15 +17,16 @@ function UserTable({ users, title, bgColor, onDeleteClick, onEditClick }) {
             <td>{user.surname}</td>
             <td>{user.role}</td>
             <td>{user.status}</td>
+            <td>{user.municipalityName || 'N/A'}</td>  
             <td>
-                <button 
-                    className="btn btn-sm btn-danger me-2" 
+                <button
+                    className="btn btn-sm btn-danger me-2"
                     onClick={() => onDeleteClick(user)}
                 >
                     Избриши
                 </button>
-                <button 
-                    className="btn btn-sm btn-warning" 
+                <button
+                    className="btn btn-sm btn-warning"
                     onClick={() => onEditClick(user)}
                 >
                     Уреди
@@ -43,6 +48,7 @@ function UserTable({ users, title, bgColor, onDeleteClick, onEditClick }) {
                             <th className={`bg-${bgColor}`}>Презиме</th>
                             <th className={`bg-${bgColor}`}>Роља</th>
                             <th className={`bg-${bgColor}`}>Статус</th>
+                            <th className={`bg-${bgColor}`}>Општина</th> 
                             <th className={`bg-${bgColor}`}>Акции</th>
                         </tr>
                     </thead>

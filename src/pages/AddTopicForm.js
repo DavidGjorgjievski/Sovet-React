@@ -16,6 +16,7 @@ import '../styles/AddTopicForm.css';
 
 const AddTopicForm = () => {
     const { id, idt } = useParams(); // Retrieve id and idt from URL parameters
+    const { municipalityId } = useParams();
     const [title, setTitle] = useState('');
     const [file, setFile] = useState(null);
     const [pdfId, setPdfId] = useState(null);
@@ -80,6 +81,8 @@ const AddTopicForm = () => {
             });
         } else {
 
+             formData.append('municipalityId', municipalityId);
+
             // Create a new topic
             response = await fetch(`${process.env.REACT_APP_API_URL}/api/sessions/${id}/topic/add`, {
                 method: 'POST', // Using POST for creating
@@ -93,7 +96,7 @@ const AddTopicForm = () => {
         if (response.ok) {
             const data = await response.json(); // Parse the response data
             const topicId = data.topicId; // Get the topicId from the response
-            navigate(`/sessions/${id}/topics#topic-${topicId}`); // Navigate to the specific topic
+            navigate(`/municipalities/${municipalityId}/sessions/${id}/topics#topic-${topicId}`); // Navigate to the specific topic
         } else {
             console.error("Failed to update or create topic.");
         }
@@ -259,7 +262,7 @@ const AddTopicForm = () => {
                                             type="button"
                                             className="btn btn-danger btn-lg"
                                             onClick={() => {
-                                                const targetUrl = idt ? `/sessions/${id}/topics#topic-${idt}` : `/sessions/${id}/topics`;
+                                                const targetUrl = idt ? `/municipalities/${municipalityId}/sessions/${id}/topics#topic-${idt}` : `/municipalities/${municipalityId}/sessions/${id}/topics`;
                                                 navigate(targetUrl);
                                             }}
                                         >

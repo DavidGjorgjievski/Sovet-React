@@ -14,6 +14,7 @@ function AddSessionForm() {
         return today.toISOString().split('T')[0]; 
     });
     const { id } = useParams();
+    const { municipalityId } = useParams();
     const navigate = useNavigate(); // Use useNavigate hook
 
     const userInfo = JSON.parse(localStorage.getItem('userInfo')) || {}; // Retrieve userInfo from local storage
@@ -49,15 +50,18 @@ function AddSessionForm() {
 
     
 
-    const handleSubmit = async (event) => {
-        event.preventDefault();
+   const handleSubmit = async (event) => {
+    event.preventDefault();
 
-        const sessionData = { name, date };
+    const sessionData = !id
+    ? { name, date, municipalityId: Number(municipalityId) }
+    : { name, date };
 
-        const jwtToken = localStorage.getItem('jwtToken');
-        console.log('JWT Token:', jwtToken);
 
-        try {
+
+    const jwtToken = localStorage.getItem('jwtToken');
+
+    try {
         // Set the URL based on whether it's editing or adding a session
         const url = id 
             ? `${process.env.REACT_APP_API_URL}/api/sessions/edit/${id}` 
@@ -78,20 +82,20 @@ function AddSessionForm() {
             throw new Error(`Failed to ${id ? 'edit' : 'add'} session`);
         }
 
-        navigate('/sessions'); // Redirect to sessions page
+        navigate(`/municipalities/${municipalityId}/sessions`); // Redirect to sessions page
     } catch (error) {
-            console.error(`Error ${id ? 'editing' : 'adding'} session:`, error);
-        }
-    };
-
-  const handleBack = () => {
-    if (id) {
-        navigate(`/sessions#session-${id}`); // Navigate to the specific session
-    } else {
-        navigate('/sessions'); // Navigate back to the sessions page
+        console.error(`Error ${id ? 'editing' : 'adding'} session:`, error);
     }
 };
 
+  const handleBack = () => {
+    if (id) {
+        navigate(`/municipalities/${municipalityId}/sessions#session-${id}`); // Navigate to the specific session
+    } else {
+        navigate(`/municipalities/${municipalityId}/sessions`); // Navigate back to the sessions page
+    }
+};
+    
     // Initialize mobile menu on component mount
     useEffect(() => {
         const cleanupMobileMenu = initializeMobileMenu();

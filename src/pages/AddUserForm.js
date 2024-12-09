@@ -13,11 +13,44 @@ function AddUserForm() {
     const navigate = useNavigate();
     const userData = JSON.parse(localStorage.getItem('userInfo')) || {};
     const [token, setToken] = useState('');
+    const [municipalities, setMunicipalities] = useState([]);
+    const [selectedMunicipalityId, setSelectedMunicipalityId] = useState('');
 
     useEffect(() => {
         const retrievedToken = localStorage.getItem('jwtToken');
         setToken(retrievedToken);
     }, []);
+
+
+     useEffect(() => {
+        // Fetch municipalities data
+        const fetchMunicipalities = async () => {
+            try {
+                const response = await fetch(process.env.REACT_APP_API_URL + "/api/municipalities/simple", {
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                    },
+                });
+
+                if (response.ok) {
+                    const data = await response.json();
+                    setMunicipalities(data);
+                } else {
+                    console.error('Failed to fetch municipalities');
+                }
+            } catch (error) {
+                console.error('Error fetching municipalities:', error);
+            }
+        };
+
+        if (token) {
+            fetchMunicipalities();
+        }
+    }, [token]);
+
+    const handleMunicipalityChange = (e) => {
+        setSelectedMunicipalityId(e.target.value);
+    };
 
     const [formData, setFormData] = useState({
         username: '',
@@ -31,9 +64,9 @@ function AddUserForm() {
     const [confirmPassword, setConfirmPassword] = useState('');
     const [fileError, setFileError] = useState(false);
     const [passwordError, setPasswordError] = useState(false);
-    const [fileName, setFileName] = useState('Нема избрана слика'); // For displaying selected file name
+    const [fileName, setFileName] = useState('Нема избрана слика'); 
     const [fileSizeError, setFileSizeError] = useState(false);
-    const roles = ["ROLE_ADMIN", "ROLE_USER", "ROLE_SPECTATOR", "ROLE_PRESENTER"];
+    const roles = ["ROLE_ADMIN", "ROLE_PRESIDENT", "ROLE_USER", "ROLE_SPECTATOR", "ROLE_PRESENTER"];
     const statuses = ["ACTIVE", "INACTIVE"];
 
     const [showPassword, setShowPassword] = useState(false);
@@ -112,6 +145,10 @@ function AddUserForm() {
     submissionData.append('status', formData.status);
     if (formData.file) {
         submissionData.append('file', formData.file);
+    }
+
+      if (selectedMunicipalityId) {
+        submissionData.append('municipalityId', selectedMunicipalityId);
     }
 
     try {
@@ -260,6 +297,24 @@ function AddUserForm() {
                                 >
                                     {statuses.map((status) => (
                                         <option key={status} value={status}>{status}</option>
+                                    ))}
+                                </select>
+                            </div>
+
+                            <div className="form-group">
+                                <label htmlFor="municipality" className="label-add">Изберете Општина:</label>
+                                <select
+                                    className="form-control form-control-lg mb-2"
+                                    id="municipality"
+                                    name="municipality"
+                                    value={selectedMunicipalityId}
+                                    onChange={handleMunicipalityChange}
+                                >
+                                    <option value="">Изберете општина</option>
+                                    {municipalities.map(municipality => (
+                                        <option key={municipality.id} value={municipality.id}>
+                                            {municipality.name}
+                                        </option>
                                     ))}
                                 </select>
                             </div>

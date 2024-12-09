@@ -11,6 +11,8 @@ function EditUserForm() {
     const { username } = useParams(); // Get the username from the URL parameters
     const userData = JSON.parse(localStorage.getItem('userInfo')) || {};
     const [token, setToken] = useState('');
+    const [municipalities, setMunicipalities] = useState([]);
+    const [selectedMunicipalityId, setSelectedMunicipalityId] = useState('');
 
     useEffect(() => {
         const retrievedToken = localStorage.getItem('jwtToken');
@@ -25,7 +27,7 @@ function EditUserForm() {
         status: 'ACTIVE',
     });
 
-    const roles = ["ROLE_ADMIN", "ROLE_USER", "ROLE_SPECTATOR", "ROLE_PRESENTER"];
+    const roles = ["ROLE_ADMIN", "ROLE_PRESIDENT", "ROLE_USER", "ROLE_SPECTATOR", "ROLE_PRESENTER"];
     const statuses = ["ACTIVE", "INACTIVE"];
 
     useEffect(() => {
@@ -35,36 +37,70 @@ function EditUserForm() {
         };
     }, [navigate]);
 
-    // Fetch user data to populate the form
-    useEffect(() => {
-        const fetchUserData = async () => {
+     useEffect(() => {
+        // Fetch municipalities data
+        const fetchMunicipalities = async () => {
             try {
-                const response = await fetch(`${process.env.REACT_APP_API_URL}/api/admin/user/${username}`, {
-                    method: 'GET',
+                const response = await fetch(process.env.REACT_APP_API_URL + "/api/municipalities/simple", {
                     headers: {
                         'Authorization': `Bearer ${token}`,
                     },
                 });
 
                 if (response.ok) {
-                    const user = await response.json();
-                    setFormData({
-                        username: user.username || '',
-                        name: user.name || '',
-                        surname: user.surname || '',
-                        role: user.role || 'ROLE_USER',
-                        status: user.status || 'ACTIVE',
-                    });
+                    const data = await response.json();
+                    setMunicipalities(data);
                 } else {
-                    console.error('Failed to fetch user data');
+                    console.error('Failed to fetch municipalities');
                 }
             } catch (error) {
-                console.error('Error fetching user data:', error);
+                console.error('Error fetching municipalities:', error);
             }
         };
 
+        if (token) {
+            fetchMunicipalities();
+        }
+    }, [token]);
+
+    // Fetch user data to populate the form
+   // Fetch user data to populate the form
+useEffect(() => {
+    const fetchUserData = async () => {
+        try {
+            const response = await fetch(`${process.env.REACT_APP_API_URL}/api/admin/user/${username}`, {
+                method: 'GET',
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                },
+            });
+
+            if (response.ok) {
+                const user = await response.json();
+
+                setFormData({
+                    username: user.username || '',
+                    name: user.name || '',
+                    surname: user.surname || '',
+                    role: user.role || 'ROLE_USER',
+                    status: user.status || 'ACTIVE',
+                });
+
+                // Pre-select the municipality if available
+                setSelectedMunicipalityId(user.municipalityId || '');
+            } else {
+                console.error('Failed to fetch user data');
+            }
+        } catch (error) {
+            console.error('Error fetching user data:', error);
+        }
+    };
+
+    if (token) {
         fetchUserData();
-    }, [username, token]);
+    }
+}, [username, token]);
+
 
     const handleInputChange = (e) => {
         const { name, value } = e.target;
@@ -79,6 +115,7 @@ function EditUserForm() {
     submissionData.append('surname', formData.surname);
     submissionData.append('role', formData.role);
     submissionData.append('status', formData.status);
+    submissionData.append('municipalityId', selectedMunicipalityId); // Add municipalityId
 
     try {
         const response = await fetch(`${process.env.REACT_APP_API_URL}/api/admin/update/${username}`, {
@@ -100,6 +137,10 @@ function EditUserForm() {
         console.error('Error submitting form:', error);
     }
 };
+
+ const handleMunicipalityChange = (e) => {
+        setSelectedMunicipalityId(e.target.value);
+    };
     return (
         <div className="add-user-form-container">
             <HelmetProvider>
@@ -188,7 +229,25 @@ function EditUserForm() {
                                 </select>
                             </div>
 
-                            <div className="form-group d-flex justify-content-between mt-2"> 
+                            <div className="form-group">
+                                <label htmlFor="municipality" className="label-add">Изберете Општина:</label>
+                                <select
+                                    className="form-control form-control-lg mb-2"
+                                    id="municipality"
+                                    name="municipality"
+                                    value={selectedMunicipalityId}
+                                    onChange={handleMunicipalityChange}
+                                >
+                                    <option value="">Изберете општина</option>
+                                    {municipalities.map(municipality => (
+                                        <option key={municipality.id} value={municipality.id}>
+                                            {municipality.name}
+                                        </option>
+                                    ))}
+                                </select>
+                            </div>
+
+                            <div className="form-group d-flex justify-content-between mt-4"> 
                                 <button type="submit" className="btn btn-lg btn-warning"> Измени Корисник </button> 
                                 <button type="button" className="btn btn-lg btn-danger" onClick={() => navigate('/admin-panel')}> Откажи </button> 
                             </div>

@@ -11,6 +11,7 @@ import HeaderPresenter from '../components/HeaderPresenter';
 function Topics() {
     const [topics, setTopics] = useState([]);
     const { id } = useParams();
+    const { municipalityId } = useParams();
     const [userRole, setUserRole] = useState(null);
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [selectedTopicId, setSelectedTopicId] = useState(null);
@@ -114,7 +115,7 @@ function Topics() {
     }, [topics]);
 
     // Determine if the user can vote
-    const canVote = userRole === 'ROLE_ADMIN' || userRole === 'ROLE_USER';
+    const canVote = userRole === 'ROLE_PRESIDENT' || userRole === 'ROLE_USER';
 
     const handlePdfFetch = async (pdfId) => {
         try {
@@ -238,14 +239,14 @@ function Topics() {
                 <div className="topic-header">
                     <button
                         className="back-button-topic"
-                        onClick={() => navigate(`/sessions#session-${id}`)}
+                        onClick={() => navigate(`/municipalities/${municipalityId}/sessions#session-${id}`)}
                     >
                         Назад
                     </button>
                     <h1 className="topic-header-title">Точки</h1>
                     <div className="session-button-container">
-                        <Link to={`/sessions/${id}/topics/add-form`}>
-                            {userRole === 'ROLE_ADMIN' && (
+                        <Link to={`/municipalities/${municipalityId}/sessions/${id}/topics/add-form`}>
+                            {userRole === 'ROLE_PRESIDENT' && (
                                 <button className="topic-add-button">Додади Точка</button>
                             )}
                         </Link>
@@ -325,7 +326,7 @@ function Topics() {
                                                         </span>
                                                     </div>
                                                 </div>
-                                                {canVote && (userInfo.role === 'ROLE_ADMIN' || userInfo.role === 'ROLE_USER') && topic.topicStatus === 'ACTIVE' && (
+                                                {canVote && (userInfo.role === 'ROLE_PRESIDENT' || userInfo.role === 'ROLE_USER') && topic.topicStatus === 'ACTIVE' && (
                                                     <div className="rez-container">
                                                     <button
                                                         onClick={() => handleVote(topic.id, 'no')}
@@ -359,7 +360,7 @@ function Topics() {
                                                                 </span>
                                                             </div>
                                                         </div>
-                                                        {canVote && (userInfo.role === 'ROLE_ADMIN' || userInfo.role === 'ROLE_USER') && topic.topicStatus === 'ACTIVE' && (
+                                                        {canVote && (userInfo.role === 'ROLE_PRESIDENT' || userInfo.role === 'ROLE_USER') && topic.topicStatus === 'ACTIVE' && (
                                                              <div className="rez-container">
                                                             <button
                                                                 onClick={() => handleVote(topic.id, 'abstained')}
@@ -388,7 +389,7 @@ function Topics() {
                                                         </span>
                                                     </div>
                                                 </div>
-                                                {canVote && (userInfo.role === 'ROLE_ADMIN' || userInfo.role === 'ROLE_USER') && topic.topicStatus === 'ACTIVE' && (
+                                                {canVote && (userInfo.role === 'ROLE_PRESIDENT' || userInfo.role === 'ROLE_USER') && topic.topicStatus === 'ACTIVE' && (
                                                     <div className="rez-container">
                                                     <button
                                                         onClick={() => handleVote(topic.id, 'cant-vote')}
@@ -426,7 +427,7 @@ function Topics() {
                                                 {userInfo.role !== 'ROLE_PRESENTER' && (
                                                     <div className="command-buttons">
                                                         <a
-                                                            href={`/sessions/${id}/topics/details/${topic.id}`}
+                                                            href={`/municipalities/${municipalityId}/sessions/${id}/topics/details/${topic.id}`}
                                                             className="btn btn-sm btn-primary topic-button"
                                                         >
                                                             <i className="fa fa-eye"></i> Детални резултати
@@ -434,7 +435,7 @@ function Topics() {
                                                     </div>
                                                 )}
 
-                                            {userInfo.role === 'ROLE_ADMIN' && (
+                                            {userInfo.role === 'ROLE_PRESIDENT' && (
                                                <div className="command-buttons-group">
                                                 {topic.topicStatus === 'CREATED' && (
                                                     <div className="command-buttons">
@@ -470,7 +471,7 @@ function Topics() {
                                             )}
                                         </div>
 
-                                        {userInfo.role === 'ROLE_ADMIN' && (
+                                        {userInfo.role === 'ROLE_PRESIDENT' && (
                                             <div className="topic-item-body-detail-group">
                                                 <div className="command-buttons">
                                                     <a
@@ -498,7 +499,7 @@ function Topics() {
                         </div>
                     )) }
                     <div className="mt-4">
-                        {topics.length > 2 && userRole === 'ROLE_ADMIN' && (
+                        {topics.length > 2 && userRole === 'ROLE_PRESIDENT' && (
                             <Link to={`/sessions/${id}/topics/add-form`}>
                                 <button className="topic-add-button">Додади Точка</button>
                             </Link>
