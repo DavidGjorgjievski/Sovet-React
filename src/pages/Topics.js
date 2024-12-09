@@ -500,7 +500,7 @@ function Topics() {
                     )) }
                     <div className="mt-4">
                         {topics.length > 2 && userRole === 'ROLE_PRESIDENT' && (
-                            <Link to={`/sessions/${id}/topics/add-form`}>
+                            <Link to={`/municipalities/${municipalityId}/sessions/${id}/topics/add-form`}>
                                 <button className="topic-add-button">Додади Точка</button>
                             </Link>
                         )}
