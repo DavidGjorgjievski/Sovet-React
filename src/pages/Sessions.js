@@ -11,11 +11,43 @@ function Sessions() {
     const [sessions, setSessions] = useState([]);
     const [showModal, setShowModal] = useState(false);
     const [selectedSession, setSelectedSession] = useState(null);
-    const [loading, setLoading] = useState(true); // Step 1: Add loading state
+    const [loading, setLoading] = useState(true);
     const { municipalityId } = useParams();
+    const [sessionImage, setSessionImage] = useState(null);
 
     // Retrieve userInfo from local storage
     const userInfo = JSON.parse(localStorage.getItem('userInfo')) || {};
+
+
+    useEffect(() => {
+        const token = localStorage.getItem('jwtToken');
+
+        const fetchSessionImage = async () => {
+            setLoading(true); // Start loading
+            try {
+                const response = await fetch(`${process.env.REACT_APP_API_URL}/api/municipalities/${municipalityId}/session-image`, {
+                    method: 'GET',
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json',
+                    },
+                });
+
+                if (!response.ok) {
+                    throw new Error('Failed to fetch the session image');
+                }
+
+                const data = await response.text(); // Since Base64 is a string
+                setSessionImage(data || null); // Set the image, or null if no image exists
+            } catch (error) {
+                console.error('Error fetching session image:', error);
+            } finally {
+                setLoading(false); // Stop loading
+            }
+        };
+
+        fetchSessionImage();
+    }, [municipalityId,sessionImage]);
     
     useEffect(() => {
         const token = localStorage.getItem('jwtToken'); 
@@ -44,6 +76,7 @@ function Sessions() {
                 setLoading(false); // Stop loading
             }
         };
+
 
         fetchSessions();
 
@@ -185,7 +218,11 @@ function Sessions() {
                         sessions.map((session) => (
                             <div key={session.id} className="session-item">
                                 <span id={`session-${session.id}`} className='id-selector-session'></span>
-                                <img src={`${process.env.PUBLIC_URL}/images/image_session.jpg`} alt="session" className="session-image" />
+                                <img 
+                                    src={sessionImage ? `data:image/jpeg;base64,${sessionImage}` : `${process.env.PUBLIC_URL}/images/image_session.jpg`} 
+                                    alt="session" 
+                                    className="session-image" 
+                                />
                                 <div className="session-info">
                                     <div className="session-text">
                                         <h2>{session.name}</h2>
