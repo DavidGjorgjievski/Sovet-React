@@ -17,29 +17,40 @@ function Municipalities() {
     useEffect(() => {
         const token = localStorage.getItem('jwtToken');
 
-        const fetchMunicipalities = async () => {
-            setLoading(true); // Start loading
-            try {
-                const response = await fetch(process.env.REACT_APP_API_URL + '/api/municipalities', {
-                    method: 'GET',
-                    headers: {
-                        'Authorization': `Bearer ${token}`,
-                        'Content-Type': 'application/json',
-                    },
-                });
-
-                if (!response.ok) {
-                    throw new Error('Network response was not ok');
-                }
-
-                const data = await response.json();
-                setMunicipalities(data);
-            } catch (error) {
-                console.error('Error fetching municipalities:', error);
-            } finally {
-                setLoading(false); // Stop loading
+      const fetchMunicipalities = async () => {
+        setLoading(true);
+        try {
+            // Check if municipalities are in localStorage
+            const cachedMunicipalities = localStorage.getItem('municipalities');
+            if (cachedMunicipalities) {
+                setMunicipalities(JSON.parse(cachedMunicipalities));
+                setLoading(false);
+                return;
             }
-        };
+
+            const response = await fetch(process.env.REACT_APP_API_URL + '/api/municipalities', {
+                method: 'GET',
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                    'Content-Type': 'application/json',
+                },
+            });
+
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+
+            const data = await response.json();
+
+            // Cache the data in localStorage
+            localStorage.setItem('municipalities', JSON.stringify(data));
+            setMunicipalities(data);
+        } catch (error) {
+            console.error('Error fetching municipalities:', error);
+        } finally {
+            setLoading(false);
+        }
+    };
 
         fetchMunicipalities();
 

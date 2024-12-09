@@ -20,72 +20,106 @@ function Sessions() {
 
 
     useEffect(() => {
-        const token = localStorage.getItem('jwtToken');
+    const token = localStorage.getItem('jwtToken');
 
-        const fetchSessionImage = async () => {
-            setLoading(true); // Start loading
-            try {
-                const response = await fetch(`${process.env.REACT_APP_API_URL}/api/municipalities/${municipalityId}/session-image`, {
-                    method: 'GET',
-                    headers: {
-                        'Authorization': `Bearer ${token}`,
-                        'Content-Type': 'application/json',
-                    },
-                });
+    const fetchSessionImage = async () => {
+        setLoading(true); // Start loading
 
-                if (!response.ok) {
-                    throw new Error('Failed to fetch the session image');
-                }
+        // Check if the session image is already cached
+        const cachedImage = localStorage.getItem(`sessionImage_${municipalityId}`);
+        if (cachedImage) {
+            setSessionImage(cachedImage); // Use the cached image
+            setLoading(false); // Stop loading
+            return;
+        }
 
-                const data = await response.text(); // Since Base64 is a string
-                setSessionImage(data || null); // Set the image, or null if no image exists
-            } catch (error) {
-                console.error('Error fetching session image:', error);
-            } finally {
-                setLoading(false); // Stop loading
+        try {
+            const response = await fetch(`${process.env.REACT_APP_API_URL}/api/municipalities/${municipalityId}/session-image`, {
+                method: 'GET',
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                    'Content-Type': 'application/json',
+                },
+            });
+
+            if (!response.ok) {
+                throw new Error('Failed to fetch the session image');
             }
-        };
 
-        fetchSessionImage();
-    }, [municipalityId,sessionImage]);
+            const data = await response.text(); // Since Base64 is a string
+            setSessionImage(data || null); // Set the image, or null if no image exists
+
+            // Cache the image in localStorage
+            if (data) {
+                localStorage.setItem(`sessionImage_${municipalityId}`, data);
+            }
+        } catch (error) {
+            console.error('Error fetching session image:', error);
+        } finally {
+            setLoading(false); // Stop loading
+        }
+    };
+
+    fetchSessionImage();
+}, [municipalityId]);
+
     
-    useEffect(() => {
-        const token = localStorage.getItem('jwtToken'); 
+   useEffect(() => {
+    const token = localStorage.getItem('jwtToken');
 
-        // Fetch sessions from the API
-        const fetchSessions = async () => {
-            setLoading(true); // Start loading
-            try {
-                const response = await fetch(`${process.env.REACT_APP_API_URL}/api/municipalities/${municipalityId}/sessions`, {
-                    method: 'GET',
-                    headers: {
-                        'Authorization': `Bearer ${token}`,
-                        'Content-Type': 'application/json'
-                    }
-                });
+    // Fetch sessions from the API
+    const fetchSessions = async () => {
+        setLoading(true); // Start loading
 
-                if (!response.ok) {
-                    throw new Error('Network response was not ok');
-                }
+        // Check if sessions for this municipality are already in localStorage
+        const cachedSessions = JSON.parse(localStorage.getItem(`sessions_${municipalityId}`)) || [];
 
-                const data = await response.json();
-                setSessions(data);
-            } catch (error) {
-                console.error('Error fetching sessions:', error);
-            } finally {
-                setLoading(false); // Stop loading
+        if (cachedSessions.length > 0) {
+        setSessions(cachedSessions);
+        setLoading(false); // Ensure loading stops
+    }
+
+        try {
+            const response = await fetch(`${process.env.REACT_APP_API_URL}/api/municipalities/${municipalityId}/sessions`, {
+                method: 'GET',
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                    'Content-Type': 'application/json',
+                },
+            });
+
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
             }
-        };
 
+            const data = await response.json();
 
-        fetchSessions();
+            // Merge new sessions with cached sessions, avoiding duplicates
+            const updatedSessions = [...cachedSessions, ...data.filter(newSession =>
+                !cachedSessions.some(cachedSession => cachedSession.id === newSession.id)
+            )];
 
-        const cleanupMobileMenu = initializeMobileMenu();
+            // Update the cache
+            localStorage.setItem(`sessions_${municipalityId}`, JSON.stringify(updatedSessions));
 
-        return () => {
-            cleanupMobileMenu(); 
-        };
-    }, [municipalityId]);
+            // Update the state
+            setSessions(updatedSessions);
+        } catch (error) {
+            console.error('Error fetching sessions:', error);
+        } finally {
+            setLoading(false); // Stop loading
+        }
+    };
+
+    fetchSessions();
+
+    const cleanupMobileMenu = initializeMobileMenu();
+
+    return () => {
+        cleanupMobileMenu();
+    };
+}, [municipalityId]);
+
 
     // Scroll to the session based on the URL hash
     useEffect(() => {
@@ -218,11 +252,13 @@ function Sessions() {
                         sessions.map((session) => (
                             <div key={session.id} className="session-item">
                                 <span id={`session-${session.id}`} className='id-selector-session'></span>
-                                <img 
-                                    src={sessionImage ? `data:image/jpeg;base64,${sessionImage}` : `${process.env.PUBLIC_URL}/images/image_session.jpg`} 
-                                    alt="session" 
-                                    className="session-image" 
-                                />
+                                {sessionImage && (
+                                    <img 
+                                        src={`data:image/jpeg;base64,${sessionImage}`} 
+                                        alt="session" 
+                                        className="session-image" 
+                                    />
+                                )}
                                 <div className="session-info">
                                     <div className="session-text">
                                         <h2>{session.name}</h2>
