@@ -499,7 +499,7 @@ function Topics() {
                         </div>
                     )) }
                     <div className="mt-4">
-                        {topics.length > 2 && userRole === 'ROLE_PRESIDENT' && (
+                        {topics.length > 2 && userRole === 'ROLE_PRESIDENT' && municipalityId === userInfo.municipalityId && (
                             <Link to={`/municipalities/${municipalityId}/sessions/${id}/topics/add-form`}>
                                 <button className="topic-add-button">Додади Точка</button>
                             </Link>
