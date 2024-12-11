@@ -228,7 +228,7 @@ function Sessions() {
             <HeadLinks />
             <Header userInfo={userInfo} /> 
             <main className="session-body-container">
-                {userInfo.role === 'ROLE_PRESIDENT' ? (
+                {userInfo.role === 'ROLE_PRESIDENT' && municipalityId === userInfo.municipalityId ? (
                     <div className="session-header">
                         <p className="session-header-title">Седници</p>
                         <div className="session-button-container">
@@ -285,7 +285,7 @@ function Sessions() {
                                                 </div>
                                             )}
                                         </div>
-                                        {userInfo.role === 'ROLE_PRESIDENT' && ( 
+                                        {userInfo.role === 'ROLE_PRESIDENT' && municipalityId === userInfo.municipalityId  && ( 
                                             <div>
                                                 <div className="d-flex align-items-center session-buttons">
                                                     <div className="first-session-button">

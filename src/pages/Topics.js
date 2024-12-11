@@ -246,7 +246,7 @@ function Topics() {
                     <h1 className="topic-header-title">Точки</h1>
                     <div className="session-button-container">
                         <Link to={`/municipalities/${municipalityId}/sessions/${id}/topics/add-form`}>
-                            {userRole === 'ROLE_PRESIDENT' && (
+                            {userRole === 'ROLE_PRESIDENT' && municipalityId === userInfo.municipalityId && (
                                 <button className="topic-add-button">Додади Точка</button>
                             )}
                         </Link>
@@ -435,7 +435,7 @@ function Topics() {
                                                     </div>
                                                 )}
 
-                                            {userInfo.role === 'ROLE_PRESIDENT' && (
+                                            {userInfo.role === 'ROLE_PRESIDENT' && municipalityId === userInfo.municipalityId && (
                                                <div className="command-buttons-group">
                                                 {topic.topicStatus === 'CREATED' && (
                                                     <div className="command-buttons">
@@ -471,7 +471,7 @@ function Topics() {
                                             )}
                                         </div>
 
-                                        {userInfo.role === 'ROLE_PRESIDENT' && (
+                                        {userInfo.role === 'ROLE_PRESIDENT' && municipalityId === userInfo.municipalityId && (
                                             <div className="topic-item-body-detail-group">
                                                 <div className="command-buttons">
                                                     <a
