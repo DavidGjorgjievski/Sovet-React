@@ -71,13 +71,6 @@ function Sessions() {
     const fetchSessions = async () => {
         setLoading(true); // Start loading
 
-        // Check if sessions for this municipality are already in localStorage
-        const cachedSessions = JSON.parse(localStorage.getItem(`sessions_${municipalityId}`)) || [];
-
-        if (cachedSessions.length > 0) {
-        setSessions(cachedSessions);
-        setLoading(false); // Ensure loading stops
-    }
 
         try {
             const response = await fetch(`${process.env.REACT_APP_API_URL}/api/municipalities/${municipalityId}/sessions`, {
@@ -93,17 +86,8 @@ function Sessions() {
             }
 
             const data = await response.json();
-
-            // Merge new sessions with cached sessions, avoiding duplicates
-            const updatedSessions = [...cachedSessions, ...data.filter(newSession =>
-                !cachedSessions.some(cachedSession => cachedSession.id === newSession.id)
-            )];
-
-            // Update the cache
-            localStorage.setItem(`sessions_${municipalityId}`, JSON.stringify(updatedSessions));
-
-            // Update the state
-            setSessions(updatedSessions);
+           
+            setSessions(data);
         } catch (error) {
             console.error('Error fetching sessions:', error);
         } finally {
@@ -158,7 +142,9 @@ function Sessions() {
                     throw new Error('Failed to delete session');
                 }
 
-                setSessions(sessions.filter((session) => session.id !== selectedSession.id));
+            const updatedSessions = sessions.filter((session) => session.id !== selectedSession.id);
+            setSessions(updatedSessions);
+
                 handleCloseModal();
             } catch (error) {
                 console.error('Error deleting session:', error);
