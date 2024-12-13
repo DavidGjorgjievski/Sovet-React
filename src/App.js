@@ -71,7 +71,7 @@ function App() {
               />
 
               <Route 
-                path="/sessions/:id?/topics/edit/:idt" 
+                path="/municipalities/:municipalityId/sessions/:id?/topics/edit/:idt" 
                 element={<ProtectedRoute element={<AddTopicForm />} allowedRoles={['ROLE_PRESIDENT']} />} 
               />
 

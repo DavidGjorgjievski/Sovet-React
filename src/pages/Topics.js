@@ -115,7 +115,9 @@ function Topics() {
     }, [topics]);
 
     // Determine if the user can vote
-    const canVote = userRole === 'ROLE_PRESIDENT' || userRole === 'ROLE_USER';
+   const canVote = 
+    (userRole === 'ROLE_PRESIDENT' || userRole === 'ROLE_USER') && 
+    userInfo.municipalityId === municipalityId;
 
     const handlePdfFetch = async (pdfId) => {
         try {
@@ -300,14 +302,14 @@ function Topics() {
                                                     </div>
                                                 </div>
                                                 {canVote && topic.topicStatus === 'ACTIVE' && (
-                                                     <div className="rez-container">
-                                                    <button
-                                                        onClick={() => handleVote(topic.id, 'yes')}
-                                                        className="btn btn-sm btn-success yes topic-button"
-                                                    >
-                                                        За
-                                                    </button>
-                                                </div>
+                                                    <div className="rez-container">
+                                                        <button
+                                                            onClick={() => handleVote(topic.id, 'yes')}
+                                                            className="btn btn-sm btn-success yes topic-button"
+                                                        >
+                                                            За
+                                                        </button>
+                                                    </div>
                                                 )}
                                             </div>
                                             <div className={`topic-item-body-detail-group-chunk ${userInfo.role === 'ROLE_PRESENTER' ? 'topic-item-body-detail-group-chunk-margin-presenter' : 'topic-item-body-detail-group-chunk-margin'}`}>
@@ -326,7 +328,7 @@ function Topics() {
                                                         </span>
                                                     </div>
                                                 </div>
-                                                {canVote && (userInfo.role === 'ROLE_PRESIDENT' || userInfo.role === 'ROLE_USER') && topic.topicStatus === 'ACTIVE' && (
+                                                 {canVote && topic.topicStatus === 'ACTIVE' && (
                                                     <div className="rez-container">
                                                     <button
                                                         onClick={() => handleVote(topic.id, 'no')}
@@ -360,7 +362,7 @@ function Topics() {
                                                                 </span>
                                                             </div>
                                                         </div>
-                                                        {canVote && (userInfo.role === 'ROLE_PRESIDENT' || userInfo.role === 'ROLE_USER') && topic.topicStatus === 'ACTIVE' && (
+                                                         {canVote && topic.topicStatus === 'ACTIVE' && (
                                                              <div className="rez-container">
                                                             <button
                                                                 onClick={() => handleVote(topic.id, 'abstained')}
@@ -389,7 +391,7 @@ function Topics() {
                                                         </span>
                                                     </div>
                                                 </div>
-                                                {canVote && (userInfo.role === 'ROLE_PRESIDENT' || userInfo.role === 'ROLE_USER') && topic.topicStatus === 'ACTIVE' && (
+                                                 {canVote && topic.topicStatus === 'ACTIVE' && (
                                                     <div className="rez-container">
                                                     <button
                                                         onClick={() => handleVote(topic.id, 'cant-vote')}
@@ -475,7 +477,7 @@ function Topics() {
                                             <div className="topic-item-body-detail-group">
                                                 <div className="command-buttons">
                                                     <a
-                                                        href={`/sessions/${id}/topics/edit/${topic.id}`}
+                                                        href={`/municipalities/${municipalityId}/sessions/${id}/topics/edit/${topic.id}`}
                                                         className="btn btn-sm btn-warning topic-button"
                                                     >
                                                         Уреди
