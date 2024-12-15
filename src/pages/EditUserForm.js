@@ -25,6 +25,7 @@ function EditUserForm() {
         surname: '',
         role: 'ROLE_USER',
         status: 'ACTIVE',
+        password: '', 
     });
 
     const roles = ["ROLE_ADMIN", "ROLE_PRESIDENT", "ROLE_USER", "ROLE_SPECTATOR", "ROLE_PRESENTER"];
@@ -79,13 +80,13 @@ useEffect(() => {
                 const user = await response.json();
 
                 setFormData({
-                    username: user.username || '',
-                    name: user.name || '',
-                    surname: user.surname || '',
-                    role: user.role || 'ROLE_USER',
-                    status: user.status || 'ACTIVE',
+                        username: user.username || '',
+                        name: user.name || '',
+                        surname: user.surname || '',
+                        role: user.role || 'ROLE_USER',
+                        status: user.status || 'ACTIVE',
+                        password: '', // Reset password field
                 });
-
                 // Pre-select the municipality if available
                 setSelectedMunicipalityId(user.municipalityId || '');
             } else {
@@ -116,6 +117,10 @@ useEffect(() => {
     submissionData.append('role', formData.role);
     submissionData.append('status', formData.status);
     submissionData.append('municipalityId', selectedMunicipalityId); // Add municipalityId
+
+    if (formData.password) {
+        submissionData.append('password', formData.password.trim());
+    }
 
     try {
         const response = await fetch(`${process.env.REACT_APP_API_URL}/api/admin/update/${username}`, {
@@ -245,6 +250,19 @@ useEffect(() => {
                                         </option>
                                     ))}
                                 </select>
+                            </div>
+
+                            <div className="form-group">
+                                <label htmlFor="password" className="label-add">Нова лозинка:</label>
+                                <input
+                                    type="text"
+                                    className="form-control form-control-lg mb-2"
+                                    id="password"
+                                    name="password"
+                                    value={formData.password}
+                                    onChange={handleInputChange}
+                                    placeholder="Внеси новa лозинка"
+                                />
                             </div>
 
                             <div className="form-group d-flex justify-content-between mt-4"> 
