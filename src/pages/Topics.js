@@ -107,9 +107,9 @@ function Topics() {
                     element.scrollIntoView({ behavior: 'smooth' });
                     // Clear the hash from the URL after scrolling
                     window.history.replaceState(null, null, ' ');
-                }, 100); // Adjust the delay if necessary
+                },1); 
 
-                return () => clearTimeout(timeoutId); // Clean up timeout
+                return () => clearTimeout(timeoutId); 
             }
         }
     }, [topics]);
@@ -283,6 +283,7 @@ function Topics() {
                                     )}
                                 </h3>
                                 <div className='topic-item-body'>
+                                    {topic.topicStatus !== "CREATED" && (
                                     <div className="topic-item-body-detail">
                                         <div className="topic-item-body-detail-group">
                                             <div className={`topic-item-body-detail-group-chunk ${userInfo.role === 'ROLE_PRESENTER' ? 'topic-item-body-detail-group-chunk-margin-presenter' : 'topic-item-body-detail-group-chunk-margin'}`}>
@@ -402,26 +403,27 @@ function Topics() {
                                                 </div>
                                                 )}
                                             </div>
-                                    </div>
-                                        <div>
+                                        </div>
                                             <div>
-                                                <div className="rez-container" style={{ display: userInfo.role !== 'ROLE_PRESENTER' ? 'block' : 'none' }}>
-                                                    <span className="text-for-rez">Не гласале:</span>
+                                                <div>
+                                                    <div className="rez-container" style={{ display: userInfo.role !== 'ROLE_PRESENTER' ? 'block' : 'none' }}>
+                                                        <span className="text-for-rez">Не гласале:</span>
+                                                    </div>
+                                                    <div className="rez-container" style={{ display: userInfo.role === 'ROLE_PRESENTER' ? 'block' : 'none' }}>
+                                                        <span className="text-for-rez-big">Не гласале:</span>
+                                                    </div>
                                                 </div>
-                                                <div className="rez-container" style={{ display: userInfo.role === 'ROLE_PRESENTER' ? 'block' : 'none' }}>
-                                                    <span className="text-for-rez-big">Не гласале:</span>
-                                                </div>
-                                            </div>
 
                                             <div>
-                                               <div className="rez-container">
+                                                <div className="rez-container">
                                                     <span className={userInfo.role === 'ROLE_PRESENTER' ? 'vote-numbers-havent-vote-big' : 'vote-numbers-havent-vote'}>
                                                         {topic.haveNotVoted}
                                                     </span>
                                                 </div>
                                             </div>
-                                        </div>
                                     </div>
+                                </div>
+                            )}
 
 
                                         <div className="topic-item-body-detail">
@@ -432,7 +434,7 @@ function Topics() {
                                                             href={`/municipalities/${municipalityId}/sessions/${id}/topics/details/${topic.id}`}
                                                             className="btn btn-sm btn-primary topic-button"
                                                         >
-                                                            <i className="fa fa-eye"></i> Детални резултати
+                                                            {topic.topicStatus === "CREATED" ? "Детали" : "Детални резултати"}
                                                         </a>
                                                     </div>
                                                 )}

@@ -107,19 +107,19 @@ function TopicDetails() {
                             </div>
                         )}
 
-                        {topicDetails.abstainedUsers?.length > 0 && (
+                        {topicDetails.noUsers?.length > 0 && (
                             <div>
-                                <h2 className="d-flex justify-content-center m-3 detailed-table-header">Советници кои гласале воздржани ({topicDetails.abstainedUsers.length}):</h2>
+                                <h2 className="d-flex justify-content-center m-3 detailed-table-header">Советници кои гласале против ({topicDetails.noUsers.length}):</h2>
                                 <table className="details-table">
                                     <thead>
                                         <tr>
-                                            <th className="abstained">Слика</th>
-                                            <th className="abstained">Име</th>
-                                            <th className="abstained">Презиме</th>
+                                            <th className="no">Слика</th>
+                                            <th className="no">Име</th>
+                                            <th className="no">Презиме</th>
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        {topicDetails.abstainedUsers.map((user, index) => (
+                                        {topicDetails.noUsers.map((user, index) => (
                                             <tr key={index}>
                                                 <td>
                                                     <img src={`data:image/jpeg;base64,${user.image}`} alt={`${user.name} ${user.surname}`} className="details-image" />
@@ -134,19 +134,19 @@ function TopicDetails() {
                             </div>
                         )}
 
-                        {topicDetails.noUsers?.length > 0 && (
+                        {topicDetails.abstainedUsers?.length > 0 && (
                             <div>
-                                <h2 className="d-flex justify-content-center m-3 detailed-table-header">Советници кои гласале против ({topicDetails.noUsers.length}):</h2>
+                                <h2 className="d-flex justify-content-center m-3 detailed-table-header">Советници кои гласале воздржани ({topicDetails.abstainedUsers.length}):</h2>
                                 <table className="details-table">
                                     <thead>
                                         <tr>
-                                            <th className="no">Слика</th>
-                                            <th className="no">Име</th>
-                                            <th className="no">Презиме</th>
+                                            <th className="abstained">Слика</th>
+                                            <th className="abstained">Име</th>
+                                            <th className="abstained">Презиме</th>
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        {topicDetails.noUsers.map((user, index) => (
+                                        {topicDetails.abstainedUsers.map((user, index) => (
                                             <tr key={index}>
                                                 <td>
                                                     <img src={`data:image/jpeg;base64,${user.image}`} alt={`${user.name} ${user.surname}`} className="details-image" />
