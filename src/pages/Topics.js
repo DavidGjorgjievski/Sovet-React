@@ -291,10 +291,9 @@ function Topics() {
                                             <div className={`topic-item-body-detail-group-chunk ${userInfo.role === 'ROLE_PRESENTER' ? 'topic-item-body-detail-group-chunk-margin-presenter' : 'topic-item-body-detail-group-chunk-margin'}`}>
                                                 <div>
                                                     <div className="rez-container" style={{ display: userInfo.role !== 'ROLE_PRESENTER' ? 'block' : 'none' }}>
-                                                        <span className="text-for-rez">За:</span>
-                                                    </div>
-                                                    <div className="rez-container" style={{ display: userInfo.role === 'ROLE_PRESENTER' ? 'block' : 'none' }}>
-                                                        <span className="text-for-rez-big">За:</span>
+                                                        <span className={userInfo.role === 'ROLE_PRESENTER' ? 'text-for-rez-big' : 'text-for-rez'}>
+                                                            За:
+                                                        </span>
                                                     </div>
                                                 </div>
                                                 <div>
@@ -318,10 +317,9 @@ function Topics() {
                                             <div className={`topic-item-body-detail-group-chunk ${userInfo.role === 'ROLE_PRESENTER' ? 'topic-item-body-detail-group-chunk-margin-presenter' : 'topic-item-body-detail-group-chunk-margin'}`}>
                                                 <div>
                                                     <div className="rez-container" style={{ display: userInfo.role !== 'ROLE_PRESENTER' ? 'block' : 'none' }}>
-                                                        <span className="text-for-rez">Против:</span>
-                                                    </div>
-                                                    <div className="rez-container" style={{ display: userInfo.role === 'ROLE_PRESENTER' ? 'block' : 'none' }}>
-                                                        <span className="text-for-rez-big">Против:</span>
+                                                        <span className={userInfo.role === 'ROLE_PRESENTER' ? 'text-for-rez-big' : 'text-for-rez'}>
+                                                            Против:
+                                                        </span>
                                                     </div>
                                                 </div>
                                                 <div>
@@ -352,10 +350,9 @@ function Topics() {
                                                     <div>
                                                         <div>
                                                             <div className="rez-container" style={{ display: userInfo.role !== 'ROLE_PRESENTER' ? 'block' : 'none' }}>
-                                                                <span className="text-for-rez">Воздржан:</span>
-                                                            </div>
-                                                            <div className="rez-container" style={{ display: userInfo.role === 'ROLE_PRESENTER' ? 'block' : 'none' }}>
-                                                                <span className="text-for-rez-big">Воздржан:</span>
+                                                                <span className={userInfo.role === 'ROLE_PRESENTER' ? 'text-for-rez-big' : 'text-for-rez'}>
+                                                                    Воздржан:
+                                                                </span>
                                                             </div>
                                                         </div>
                                                         <div>
@@ -380,11 +377,10 @@ function Topics() {
 
                                             <div className={`topic-item-body-detail-group-chunk ${userInfo.role === 'ROLE_PRESENTER' ? 'topic-item-body-detail-group-chunk-margin-presenter' : 'topic-item-body-detail-group-chunk-margin'}`}>
                                                 <div>
-                                                    <div className="rez-container" style={{ display: userInfo.role !== 'ROLE_PRESENTER' ? 'block' : 'none' }}>
-                                                        <span className="text-for-rez">Се иземува:</span>
-                                                    </div>
-                                                    <div className="rez-container" style={{ display: userInfo.role === 'ROLE_PRESENTER' ? 'block' : 'none' }}>
-                                                        <span className="text-for-rez-big">Се иземува:</span>
+                                                   <div className="rez-container" style={{ display: userInfo.role !== 'ROLE_PRESENTER' ? 'block' : 'none' }}>
+                                                        <span className={userInfo.role === 'ROLE_PRESENTER' ? 'text-for-rez-big' : 'text-for-rez'}>
+                                                            Се иземува:
+                                                        </span>
                                                     </div>
                                                 </div>
                                                 <div>
@@ -408,11 +404,10 @@ function Topics() {
                                         </div>
                                             <div>
                                                 <div>
-                                                    <div className="rez-container" style={{ display: userInfo.role !== 'ROLE_PRESENTER' ? 'block' : 'none' }}>
-                                                        <span className="text-for-rez">Не гласале:</span>
-                                                    </div>
-                                                    <div className="rez-container" style={{ display: userInfo.role === 'ROLE_PRESENTER' ? 'block' : 'none' }}>
-                                                        <span className="text-for-rez-big">Не гласале:</span>
+                                                   <div className="rez-container" style={{ display: userInfo.role !== 'ROLE_PRESENTER' ? 'block' : 'none' }}>
+                                                        <span className={userInfo.role === 'ROLE_PRESENTER' ? 'text-for-rez-big' : 'text-for-rez'}>
+                                                            Не гласале:
+                                                        </span>
                                                     </div>
                                                 </div>
 
