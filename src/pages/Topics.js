@@ -263,7 +263,9 @@ function Topics() {
                         <div key={topic.id} className='topic-div-rel'>
                             <span id={`topic-${topic.id}`} className="topic-span-id"></span>
                             <div className={`topic-item ${ 
-                                topic.topicStatus === 'FINISHED' ? 'finished-topic' : ''} ${
+                                topic.topicStatus === 'FINISHED' || 
+                                topic.topicStatus === 'WITHDRAWN' || 
+                                topic.topicStatus === 'INFORMATION' ? 'finished-topic' : ''} ${
                                 topic.topicStatus === 'ACTIVE' ? 'active-topic' : ''} ${
                                 userRole === 'ROLE_PRESENTER' ? 'topic-item-size-presenter' : 'topic-item-size'
                             }`}>
@@ -283,7 +285,7 @@ function Topics() {
                                     )}
                                 </h3>
                                 <div className='topic-item-body'>
-                                    {topic.topicStatus !== "CREATED" && (
+                                    {(topic.topicStatus === "ACTIVE" || topic.topicStatus === "FINISHED") && (
                                     <div className="topic-item-body-detail">
                                         <div className="topic-item-body-detail-group">
                                             <div className={`topic-item-body-detail-group-chunk ${userInfo.role === 'ROLE_PRESENTER' ? 'topic-item-body-detail-group-chunk-margin-presenter' : 'topic-item-body-detail-group-chunk-margin'}`}>
@@ -425,19 +427,31 @@ function Topics() {
                                 </div>
                             )}
 
+                        <div>
+                            {topic.topicStatus === "INFORMATION" && (
+                                <h4>[Информација]</h4>
+                            )}
+                            {topic.topicStatus === "WITHDRAWN" && (
+                                <h4>[Повлечена]</h4>
+                            )}
+                        </div>
+
 
                                         <div className="topic-item-body-detail">
                                             <div className="topic-item-body-detail-group">
-                                                {userInfo.role !== 'ROLE_PRESENTER' && (
-                                                    <div className="command-buttons">
-                                                        <a
-                                                            href={`/municipalities/${municipalityId}/sessions/${id}/topics/details/${topic.id}`}
-                                                            className="btn btn-sm btn-primary topic-button"
-                                                        >
-                                                            {topic.topicStatus === "CREATED" ? "Детали" : "Детални резултати"}
-                                                        </a>
-                                                    </div>
-                                                )}
+                                                {userInfo.role !== 'ROLE_PRESENTER' && 
+                                                    topic.topicStatus !== 'WITHDRAWN' && 
+                                                    topic.topicStatus !== 'INFORMATION' && (
+                                                        <div className="command-buttons">
+                                                            <a
+                                                                href={`/municipalities/${municipalityId}/sessions/${id}/topics/details/${topic.id}`}
+                                                                className="btn btn-sm btn-primary topic-button"
+                                                            >
+                                                                {topic.topicStatus === "CREATED" ? "Детали" : "Детални резултати"}
+                                                            </a>
+                                                        </div>
+                                                    )
+                                                 } 
 
                                             {userInfo.role === 'ROLE_PRESIDENT' && municipalityId === userInfo.municipalityId && (
                                                <div className="command-buttons-group">
@@ -448,7 +462,7 @@ function Topics() {
                                                             className="btn btn-sm btn-success topic-button"
                                                         >
                                                             Започни гласање
-                                                        </button>
+                                                        </button>   
                                                     </div>
                                                 )}
                                                 {topic.topicStatus === 'ACTIVE' && (

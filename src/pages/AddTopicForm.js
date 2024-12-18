@@ -15,45 +15,58 @@ import {
 import '../styles/AddTopicForm.css';
 
 const AddTopicForm = () => {
-    const { id, idt } = useParams(); // Retrieve id and idt from URL parameters
+    const { id, idt } = useParams();
     const { municipalityId } = useParams();
     const [title, setTitle] = useState('');
     const [file, setFile] = useState(null);
     const [pdfId, setPdfId] = useState(null);
     const [fileError, setFileError] = useState(false);
-    const [fileTypeError, setFileTypeError] = useState(false); // State for file type error
-    const [currentPdfFileName, setCurrentPdfFileName] = useState(''); // State for current PDF file name
+    const [fileTypeError, setFileTypeError] = useState(false); 
+    const [currentPdfFileName, setCurrentPdfFileName] = useState(''); 
     const navigate = useNavigate();
-    const userInfo = JSON.parse(localStorage.getItem('userInfo')) || {}; // Retrieve userInfo from local storage
+    const userInfo = JSON.parse(localStorage.getItem('userInfo')) || {}; 
+
+    const [topicStatus, setTopicStatus] = useState('');
+    
+     const topicStatusOptions = [
+            { value: 'CREATED', label: 'Креирана' },
+            { value: 'ACTIVE', label: 'Активна' },
+            { value: 'FINISHED', label: 'Завршена' },
+            { value: 'INFORMATION', label: 'Информација' },
+            { value: 'WITHDRAWN', label: 'Повлечена' },
+        ];
 
     useEffect(() => {
-        if (idt) {
-            const fetchTopic = async () => {
-                try {
-                    const jwtToken = localStorage.getItem('jwtToken');
-                    const response = await fetch(`${process.env.REACT_APP_API_URL}/api/sessions/${id}/topics/${idt}`, {
-                        method: 'GET',
-                        headers: {
-                            'Authorization': `Bearer ${jwtToken}`,
-                        },
-                    });
+    if (idt) {
+        const fetchTopic = async () => {
+            try {
+                const jwtToken = localStorage.getItem('jwtToken');
+                const response = await fetch(`${process.env.REACT_APP_API_URL}/api/sessions/${id}/topics/${idt}`, {
+                    method: 'GET',
+                    headers: {
+                        'Authorization': `Bearer ${jwtToken}`,
+                    },
+                });
 
-                    if (response.ok) {
-                        const topicData = await response.json();
-                        setTitle(topicData.title);
-                        setCurrentPdfFileName(topicData.pdfFileName); // Set the current PDF file name
-                        setPdfId(topicData.pdfFileId)
-                    } else {
-                        console.error("Failed to fetch topic.");
-                    }
-                } catch (error) {
-                    console.error("Error fetching the topic:", error);
+                if (response.ok) {
+                    const topicData = await response.json();
+                    setTitle(topicData.title);
+                    setCurrentPdfFileName(topicData.pdfFileName); // Set the current PDF file name
+                    setPdfId(topicData.pdfFileId);
+                    setTopicStatus(topicData.topicStatus || 'CREATED'); // Default to CREATED if status is null
+                } else {
+                    console.error("Failed to fetch topic.");
                 }
-            };
+            } catch (error) {
+                console.error("Error fetching the topic:", error);
+            }
+        };
 
-            fetchTopic();
-        }
-    }, [idt, id]);
+        fetchTopic();
+    } else {
+        setTopicStatus('CREATED');
+    }
+}, [idt, id]);
 
     const updateFileName = (fileName) => {
         const fileDropMessage = document.querySelector('.file-drop-message');
@@ -64,6 +77,7 @@ const AddTopicForm = () => {
     e.preventDefault();
     const formData = new FormData();
     formData.append('title', title);
+    formData.append('topicStatus', topicStatus);
     if (file) formData.append('file', file);
 
     const jwtToken = localStorage.getItem('jwtToken');
@@ -252,7 +266,27 @@ const AddTopicForm = () => {
                                         </div>
                                     )}
 
-                                    <div className="mt-2 d-flex flex-start">
+
+                                        <div className="form-group">
+                                            <label htmlFor="topicStatus" className="label-add">Статус на седница:</label>
+                                            <select
+                                                id="topicStatus"
+                                                name="topicStatus"
+                                                className="form-control form-control-lg mb-2"
+                                                value={topicStatus}
+                                                onChange={(e) => setTopicStatus(e.target.value)}
+                                                required
+                                            >
+                                                <option value="" disabled>Избери статус</option>
+                                                {topicStatusOptions.map((status) => (
+                                                    <option key={status.value} value={status.value}>
+                                                        {status.label}
+                                                    </option>
+                                                ))}
+                                            </select>
+                                        </div>
+
+                                    <div className="mt-3 d-flex flex-start">
                                         <button type="submit"
                                             className={`btn ${idt ? "btn-warning" : "btn-primary"} btn-lg me-2`}>
                                             {idt ? "Уреди" : "Додади"}
