@@ -46,7 +46,7 @@ const AddTopicForm = () => {
                     headers: {
                         'Authorization': `Bearer ${jwtToken}`,
                     },
-                });
+                }); 
 
                 if (response.ok) {
                     const topicData = await response.json();
@@ -245,7 +245,7 @@ const AddTopicForm = () => {
 
                                     {fileError && (
                                         <div className="error-message-pdf">
-                                            <p className="text-danger">Максималната големина на PDF датотека е 10MB!</p>
+                                            <p className="text-danger">Максималната големина на PDF датотека е 20MB!</p>
                                         </div>
                                     )}
                                     {fileTypeError && (
