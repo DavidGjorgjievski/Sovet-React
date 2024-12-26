@@ -33,6 +33,10 @@ function Topics() {
     const token = localStorage.getItem('jwtToken');
     const navigate = useNavigate();
 
+
+    // new IMPL
+      const [currentVotes, setCurrentVotes] = useState({});
+
     const fetchTopics = useCallback(async () => {
         try {
             const response = await fetch(`${process.env.REACT_APP_API_URL}/api/sessions/${id}/topics`, {
@@ -216,6 +220,13 @@ function Topics() {
                 throw new Error(`Failed to vote: ${voteType}`);
             }
             console.log(`${voteType} vote submitted successfully`);
+            
+            // Update the current vote for the topic
+            setCurrentVotes((prevVotes) => ({
+                ...prevVotes,
+                [topicId]: voteType,
+            }));
+
             await fetchTopics();
         } catch (error) {
             console.error('Error:', error);
@@ -234,7 +245,7 @@ function Topics() {
            {userRole === 'ROLE_PRESENTER' ? (
                 <HeaderPresenter />
             ) : (
-                <Header userInfo={userInfo} fetchTopics={fetchTopics} />
+                <Header userInfo={userInfo} fetchTopics={fetchTopics}  setCurrentVotes={setCurrentVotes} />
             )}
             <main className="topcis-container-body">
                  {userRole !== 'ROLE_PRESENTER' && (
@@ -303,10 +314,11 @@ function Topics() {
                                                         </span>
                                                     </div>
                                                 </div>
-                                                {canVote && topic.topicStatus === 'ACTIVE' && (
+                                                 {canVote && topic.topicStatus === 'ACTIVE' && (
                                                     <div className="rez-container">
                                                         <button
                                                             onClick={() => handleVote(topic.id, 'yes')}
+                                                            disabled={currentVotes[topic.id] === 'yes'}
                                                             className="btn btn-sm btn-success yes topic-button"
                                                         >
                                                             За
@@ -329,15 +341,16 @@ function Topics() {
                                                         </span>
                                                     </div>
                                                 </div>
-                                                 {canVote && topic.topicStatus === 'ACTIVE' && (
+                                                  {canVote && topic.topicStatus === 'ACTIVE' && (
                                                     <div className="rez-container">
-                                                    <button
-                                                        onClick={() => handleVote(topic.id, 'no')}
-                                                        className="btn btn-sm btn-danger topic-button"
-                                                    >
-                                                        Против
-                                                    </button>
-                                                </div>
+                                                        <button
+                                                            onClick={() => handleVote(topic.id, 'no')}
+                                                            disabled={currentVotes[topic.id] === 'no'}
+                                                            className="btn btn-sm btn-danger topic-button"
+                                                        >
+                                                            Против
+                                                        </button>
+                                                    </div>
                                                 )}
                                             </div>
                                            
@@ -363,14 +376,15 @@ function Topics() {
                                                             </div>
                                                         </div>
                                                          {canVote && topic.topicStatus === 'ACTIVE' && (
-                                                             <div className="rez-container">
-                                                            <button
-                                                                onClick={() => handleVote(topic.id, 'abstained')}
-                                                                className="btn btn-sm btn-warning topic-button"
-                                                            >
-                                                                Воздржан
-                                                            </button>
-                                                        </div>
+                                                            <div className="rez-container">
+                                                                <button
+                                                                    onClick={() => handleVote(topic.id, 'abstained')}
+                                                                    disabled={currentVotes[topic.id] === 'abstained'}
+                                                                    className="btn btn-sm btn-warning topic-button"
+                                                                >
+                                                                    Воздржан
+                                                                </button>
+                                                            </div>
                                                         )}
                                                     </div>
                                                 </div>
@@ -390,15 +404,16 @@ function Topics() {
                                                         </span>
                                                     </div>
                                                 </div>
-                                                 {canVote && topic.topicStatus === 'ACTIVE' && (
+                                                {canVote && topic.topicStatus === 'ACTIVE' && (
                                                     <div className="rez-container">
-                                                    <button
-                                                        onClick={() => handleVote(topic.id, 'cant-vote')}
-                                                        className="btn btn-sm btn-secondary topic-button"
-                                                    >
-                                                        Се иземува
-                                                    </button>
-                                                </div>
+                                                        <button
+                                                            onClick={() => handleVote(topic.id, 'cant-vote')}
+                                                            disabled={currentVotes[topic.id] === 'cant-vote'}
+                                                            className="btn btn-sm btn-secondary topic-button"
+                                                        >
+                                                            Се иземува
+                                                        </button>
+                                                    </div>
                                                 )}
                                             </div>
                                         </div>
