@@ -234,6 +234,58 @@ function Topics() {
     };
     
 
+    // for scrool
+
+
+    useEffect(() => {
+    const handleBeforeUnload = () => {
+        const scrollPosition = window.scrollY;
+        localStorage.setItem('scrollPosition', scrollPosition);
+
+        // If you want to save the visible topic ID
+        const topicsDivs = document.querySelectorAll('.topic-div-rel');
+        let visibleTopicId = null;
+
+        for (const div of topicsDivs) {
+            const rect = div.getBoundingClientRect();
+            if (rect.top >= 0 && rect.bottom <= window.innerHeight) {
+                visibleTopicId = div.id; // Assuming topic-div-rel divs have an ID
+                break;
+            }
+        }
+        if (visibleTopicId) {
+            localStorage.setItem('visibleTopicId', visibleTopicId);
+        }
+    };
+
+    window.addEventListener('beforeunload', handleBeforeUnload);
+    return () => {
+        window.removeEventListener('beforeunload', handleBeforeUnload);
+    };
+}, []);
+
+   useEffect(() => {
+    const scrollPosition = localStorage.getItem('scrollPosition');
+    const visibleTopicId = localStorage.getItem('visibleTopicId');
+
+    if (scrollPosition) {
+        // Restore scroll position
+        setTimeout(() => {
+            window.scrollTo(0, parseInt(scrollPosition, 10));
+        }, 100); // Adding a delay ensures the DOM is fully loaded
+    }
+
+    if (visibleTopicId) {
+        // Scroll to the specific topic
+        const element = document.getElementById(visibleTopicId);
+        if (element) {
+            setTimeout(() => {
+                element.scrollIntoView({ behavior: 'smooth' });
+            }, 100);
+        }
+    }
+}, [topics]);
+
     return (
         <div className="topics-container">
             <HelmetProvider>
@@ -245,7 +297,7 @@ function Topics() {
            {userRole === 'ROLE_PRESENTER' ? (
                 <HeaderPresenter />
             ) : (
-                <Header userInfo={userInfo} fetchTopics={fetchTopics}  setCurrentVotes={setCurrentVotes} />
+                <Header userInfo={userInfo} fetchTopics={fetchTopics} setCurrentVotes={setCurrentVotes} />
             )}
             <main className="topcis-container-body">
                  {userRole !== 'ROLE_PRESENTER' && (
