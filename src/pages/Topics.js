@@ -18,6 +18,7 @@ function Topics() {
     const [selectedTopicTitle, setSelectedTopicTitle] = useState(null);
 
     const [isFromLogo, setIsFromLogo] = useState(false);
+    const [isVoteAction, setIsVoteAction] = useState(false);
 
     const isFromLogoRef = useRef(isFromLogo);
 
@@ -211,31 +212,34 @@ function Topics() {
         }
     };
 
-    const handleVote = async (topicId, voteType) => {
-        try {
-            const response = await fetch(`${process.env.REACT_APP_API_URL}/api/topics/${voteType}/${topicId}`, {
-                method: 'GET',
-                headers: {
-                    'Authorization': `Bearer ${token}`,
-                    'Content-Type': 'application/json',
-                },
-            });
-            if (!response.ok) {
-                throw new Error(`Failed to vote: ${voteType}`);
-            }
-            console.log(`${voteType} vote submitted successfully`);
-            
-            // Update the current vote for the topic
-            setCurrentVotes((prevVotes) => ({
-                ...prevVotes,
-                [topicId]: voteType,
-            }));
-
-            await fetchTopics();
-        } catch (error) {
-            console.error('Error:', error);
+const handleVote = async (topicId, voteType) => {
+    try {
+        const response = await fetch(`${process.env.REACT_APP_API_URL}/api/topics/${voteType}/${topicId}`, {
+            method: 'GET',
+            headers: {
+                'Authorization': `Bearer ${token}`,
+                'Content-Type': 'application/json',
+            },
+        });
+        if (!response.ok) {
+            throw new Error(`Failed to vote: ${voteType}`);
         }
-    };
+        console.log(`${voteType} vote submitted successfully`);
+        
+        // Set vote action flag to true to skip scroll restoration
+        setIsVoteAction(true);
+
+        // Update the current vote for the topic
+        setCurrentVotes((prevVotes) => ({
+            ...prevVotes,
+            [topicId]: voteType,
+        }));
+
+        await fetchTopics();
+    } catch (error) {
+        console.error('Error:', error);
+    }
+};
     
     // for scrool
 
@@ -268,6 +272,11 @@ useEffect(() => {
     if (isFromLogoRef.current) {
         setIsFromLogo(false); // Reset the flag after handling
         return; // Skip restoring scroll position if action was from the logo
+    }
+
+     if (isVoteAction) {
+        setIsVoteAction(false);  // Reset flag after handling
+        return; // Exit early to skip scroll restoration
     }
 
     console.log("raboti")
