@@ -21,6 +21,7 @@ function Topics() {
     const [isVoteAction, setIsVoteAction] = useState(false);
 
     const isFromLogoRef = useRef(isFromLogo);
+    const isVoteActionRef = useRef(isVoteAction);
 
     const openModal = (topicId, topicTitle) => {
         setSelectedTopicId(topicId);
@@ -164,6 +165,7 @@ function Topics() {
             if (!response.ok) {
                 throw new Error('Failed to start voting.');
             }
+            setIsVoteAction(true);
             console.log('Voting started successfully');
             // You can refresh data or trigger other effects here if needed
             await fetchTopics();
@@ -184,6 +186,8 @@ function Topics() {
             if (!response.ok) {
                 throw new Error('Failed to finish voting.');
             }
+             setIsVoteAction(true);
+
             await fetchTopics();
             console.log('Voting finished successfully');
             // Trigger additional effects here if needed
@@ -204,7 +208,10 @@ function Topics() {
             if (!response.ok) {
                 throw new Error('Failed to restart voting.');
             }
+            setIsVoteAction(true);
+
             console.log('Voting restarted successfully');
+
             // Trigger additional effects here if needed
             await fetchTopics();
         } catch (error) {
@@ -266,7 +273,8 @@ const saveScrollPosition = () => {
 
 useEffect(() => {
     isFromLogoRef.current = isFromLogo; // Sync state with ref value
-}, [isFromLogo]);
+    isVoteActionRef.current = isVoteAction;
+}, [isFromLogo,isVoteAction]);
 
 useEffect(() => {
     if (isFromLogoRef.current) {
@@ -274,12 +282,11 @@ useEffect(() => {
         return; // Skip restoring scroll position if action was from the logo
     }
 
-     if (isVoteAction) {
+     if (isVoteActionRef.current) {
         setIsVoteAction(false);  // Reset flag after handling
         return; // Exit early to skip scroll restoration
     }
 
-    console.log("raboti")
     const scrollPosition = sessionStorage.getItem('scrollPosition');
     if (scrollPosition) {
         const timeoutId = setTimeout(() => {
