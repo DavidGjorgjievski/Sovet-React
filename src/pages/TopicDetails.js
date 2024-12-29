@@ -49,13 +49,20 @@ function TopicDetails() {
     // Initialize mobile menu
     const cleanupMobileMenu = initializeMobileMenu();
 
-    sessionStorage.removeItem('scrollPosition');
-
     // Cleanup function to remove event listeners or any other cleanup actions
     return () => {
       cleanupMobileMenu();
     };
   }, []);
+
+  const handleBackButtonClick = () => {
+    // Remove the scroll position from sessionStorage
+    sessionStorage.removeItem('scrollPosition');
+    console.log("Scroll position removed");
+
+    // Navigate to the desired URL
+    navigate(`/municipalities/${municipalityId}/sessions/${id}/topics#topic-${idt}`);
+};
 
     return (
         <div className="topic-details-container">
@@ -69,7 +76,9 @@ function TopicDetails() {
             <main className='topic-details-body-container'>
                 <div className="detailed-result-header">
                     <div className="detailed-result-button-container">
-                        <button onClick={() => navigate(`/municipalities/${municipalityId}/sessions/${id}/topics#topic-${idt}`)} className="back-button">Назад</button>
+                        <button onClick={handleBackButtonClick} className="back-button">
+                            Назад
+                        </button>
                     </div>
                     <h1 className="topic-header-title">Детални резултати</h1>
                 </div>

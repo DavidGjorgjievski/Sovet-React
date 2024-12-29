@@ -110,6 +110,7 @@ const AddTopicForm = () => {
         if (response.ok) {
             const data = await response.json(); // Parse the response data
             const topicId = data.topicId; // Get the topicId from the response
+            sessionStorage.removeItem('scrollPosition');
             navigate(`/municipalities/${municipalityId}/sessions/${id}/topics#topic-${topicId}`); // Navigate to the specific topic
         } else {
             console.error("Failed to update or create topic.");
@@ -122,7 +123,6 @@ const AddTopicForm = () => {
 
     useEffect(() => {
         const cleanupMobileMenu = initializeMobileMenu();
-        sessionStorage.removeItem('scrollPosition');
         return () => {
             cleanupMobileMenu(); // Cleanup on unmount
         };

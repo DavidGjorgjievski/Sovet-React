@@ -243,6 +243,7 @@ useEffect(() => {
     // Save scroll position on refresh
     const handleBeforeUnload = () => {
         sessionStorage.setItem('scrollPosition', window.scrollY);
+        console.log("raboti set positiion")
     };
 
     window.addEventListener('beforeunload', handleBeforeUnload);
@@ -251,6 +252,12 @@ useEffect(() => {
         window.removeEventListener('beforeunload', handleBeforeUnload);
     };
 }, []);
+
+const saveScrollPosition = () => {
+    const scrollPosition = window.scrollY;
+    sessionStorage.setItem('scrollPosition', scrollPosition);
+    console.log("Scroll position saved:", scrollPosition);
+};
 
 
 useEffect(() => {
@@ -499,10 +506,11 @@ useEffect(() => {
                                                     topic.topicStatus !== 'WITHDRAWN' && 
                                                     topic.topicStatus !== 'INFORMATION' && (
                                                         <div className="command-buttons">
-                                                           <Link
+                                                          <Link
                                                                 to={`/municipalities/${municipalityId}/sessions/${id}/topics/details/${topic.id}`}
                                                                 className="btn btn-sm btn-primary topic-button"
-                                                            >
+                                                                onClick={saveScrollPosition} // Use the function here
+                                                            >   
                                                                 {topic.topicStatus === "CREATED" ? "Детали" : "Детални резултати"}
                                                             </Link>
                                                         </div>
@@ -548,12 +556,13 @@ useEffect(() => {
                                         {userInfo.role === 'ROLE_PRESIDENT' && municipalityId === userInfo.municipalityId && (
                                             <div className="topic-item-body-detail-group">
                                                 <div className="command-buttons">
-                                                    <a
-                                                        href={`/municipalities/${municipalityId}/sessions/${id}/topics/edit/${topic.id}`}
+                                                   <Link
+                                                        to={`/municipalities/${municipalityId}/sessions/${id}/topics/edit/${topic.id}`}
                                                         className="btn btn-sm btn-warning topic-button"
+                                                        onClick={saveScrollPosition} // Use the function here
                                                     >
                                                         Уреди
-                                                    </a>
+                                                    </Link>
                                                 </div>
                                                 <div className="command-buttons">
                                                    
