@@ -19,6 +19,8 @@ function Profile() {
             setUserData(prevData => ({ ...prevData, image: imageData }));
         }
 
+        sessionStorage.removeItem('scrollPosition');
+
         const cleanupMobileMenu = initializeMobileMenu();
 
         return () => {

@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom'; // Import Link from react-router-dom
 import '../styles/Header.css';
 
-function Header({ userInfo, fetchTopics = null, setCurrentVotes = null}) {// Accept userInfo as a prop
+function Header({ userInfo, fetchTopics = null, setCurrentVotes = null, setIsFromLogo = null}) {// Accept userInfo as a prop
     const [isMobileNavOpen, setMobileNavOpen] = useState(false);
 
     const toggleMobileMenu = () => {
@@ -16,6 +16,7 @@ function Header({ userInfo, fetchTopics = null, setCurrentVotes = null}) {// Acc
 useEffect(() => {
     const logoImg = document.getElementById('logo-img');
     const handleClick = () => {
+        setIsFromLogo(true);
         setCurrentVotes({});
         if (fetchTopics) {
             fetchTopics();
@@ -26,7 +27,7 @@ useEffect(() => {
     logoImg.addEventListener('click', handleClick);
 
     return () => logoImg.removeEventListener('click', handleClick);
-}, [fetchTopics,setCurrentVotes]);
+}, [fetchTopics,setCurrentVotes, setIsFromLogo]);
 
     return (
         <header>

@@ -56,6 +56,9 @@ function Municipalities() {
 
         const cleanupMobileMenu = initializeMobileMenu();
 
+        sessionStorage.removeItem('scrollPosition');
+
+
         return () => {
             cleanupMobileMenu();
         };

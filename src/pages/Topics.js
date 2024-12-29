@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState, useMemo } from 'react';
+import React, { useCallback, useEffect, useState, useMemo,useRef } from 'react';
 import { Helmet, HelmetProvider } from 'react-helmet-async';
 import { useNavigate, useParams, Link } from 'react-router-dom';
 import '../styles/Topics.css';
@@ -16,6 +16,10 @@ function Topics() {
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [selectedTopicId, setSelectedTopicId] = useState(null);
     const [selectedTopicTitle, setSelectedTopicTitle] = useState(null);
+
+    const [isFromLogo, setIsFromLogo] = useState(false);
+
+    const isFromLogoRef = useRef(isFromLogo);
 
     const openModal = (topicId, topicTitle) => {
         setSelectedTopicId(topicId);
@@ -233,58 +237,48 @@ function Topics() {
         }
     };
     
-
     // for scrool
 
-
-    useEffect(() => {
+useEffect(() => {
+    // Save scroll position on refresh
     const handleBeforeUnload = () => {
-        const scrollPosition = window.scrollY;
-        localStorage.setItem('scrollPosition', scrollPosition);
-
-        // If you want to save the visible topic ID
-        const topicsDivs = document.querySelectorAll('.topic-div-rel');
-        let visibleTopicId = null;
-
-        for (const div of topicsDivs) {
-            const rect = div.getBoundingClientRect();
-            if (rect.top >= 0 && rect.bottom <= window.innerHeight) {
-                visibleTopicId = div.id; // Assuming topic-div-rel divs have an ID
-                break;
-            }
-        }
-        if (visibleTopicId) {
-            localStorage.setItem('visibleTopicId', visibleTopicId);
-        }
+        sessionStorage.setItem('scrollPosition', window.scrollY);
     };
 
     window.addEventListener('beforeunload', handleBeforeUnload);
+
     return () => {
         window.removeEventListener('beforeunload', handleBeforeUnload);
     };
 }, []);
 
-   useEffect(() => {
-    const scrollPosition = localStorage.getItem('scrollPosition');
-    const visibleTopicId = localStorage.getItem('visibleTopicId');
 
-    if (scrollPosition) {
-        // Restore scroll position
-        setTimeout(() => {
-            window.scrollTo(0, parseInt(scrollPosition, 10));
-        }, 100); // Adding a delay ensures the DOM is fully loaded
+useEffect(() => {
+    isFromLogoRef.current = isFromLogo; // Sync state with ref value
+}, [isFromLogo]);
+
+useEffect(() => {
+    if (isFromLogoRef.current) {
+        setIsFromLogo(false); // Reset the flag after handling
+        return; // Skip restoring scroll position if action was from the logo
     }
 
-    if (visibleTopicId) {
-        // Scroll to the specific topic
-        const element = document.getElementById(visibleTopicId);
-        if (element) {
-            setTimeout(() => {
-                element.scrollIntoView({ behavior: 'smooth' });
-            }, 100);
-        }
+    console.log("raboti")
+    const scrollPosition = sessionStorage.getItem('scrollPosition');
+    if (scrollPosition) {
+        const timeoutId = setTimeout(() => {
+            window.scrollTo(0, parseInt(scrollPosition, 10));
+        }, 100); // Delay to ensure topics are rendered
+
+        return () => clearTimeout(timeoutId);
     }
 }, [topics]);
+
+
+
+
+
+
 
     return (
         <div className="topics-container">
@@ -297,7 +291,7 @@ function Topics() {
            {userRole === 'ROLE_PRESENTER' ? (
                 <HeaderPresenter />
             ) : (
-                <Header userInfo={userInfo} fetchTopics={fetchTopics} setCurrentVotes={setCurrentVotes} />
+                <Header userInfo={userInfo} fetchTopics={fetchTopics} setCurrentVotes={setCurrentVotes} setIsFromLogo={setIsFromLogo} />
             )}
             <main className="topcis-container-body">
                  {userRole !== 'ROLE_PRESENTER' && (
@@ -505,12 +499,12 @@ function Topics() {
                                                     topic.topicStatus !== 'WITHDRAWN' && 
                                                     topic.topicStatus !== 'INFORMATION' && (
                                                         <div className="command-buttons">
-                                                            <a
-                                                                href={`/municipalities/${municipalityId}/sessions/${id}/topics/details/${topic.id}`}
+                                                           <Link
+                                                                to={`/municipalities/${municipalityId}/sessions/${id}/topics/details/${topic.id}`}
                                                                 className="btn btn-sm btn-primary topic-button"
                                                             >
                                                                 {topic.topicStatus === "CREATED" ? "Детали" : "Детални резултати"}
-                                                            </a>
+                                                            </Link>
                                                         </div>
                                                     )
                                                  } 

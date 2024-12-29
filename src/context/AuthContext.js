@@ -48,11 +48,12 @@ export const AuthProvider = ({ children }) => {
         setRole(role);
     }
 
-    const logout = () => {
-        localStorage.clear();
-        setIsAuthenticated(false);
-        setRole(null);
-    };
+   const logout = () => {
+    localStorage.clear();
+    sessionStorage.clear();  
+    setIsAuthenticated(false);
+    setRole(null);
+};
 
     return (
         <AuthContext.Provider value={{ isAuthenticated, role, login, logout, loading }}>

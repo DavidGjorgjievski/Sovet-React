@@ -49,6 +49,8 @@ function TopicDetails() {
     // Initialize mobile menu
     const cleanupMobileMenu = initializeMobileMenu();
 
+    sessionStorage.removeItem('scrollPosition');
+
     // Cleanup function to remove event listeners or any other cleanup actions
     return () => {
       cleanupMobileMenu();

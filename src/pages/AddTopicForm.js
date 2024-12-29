@@ -122,6 +122,7 @@ const AddTopicForm = () => {
 
     useEffect(() => {
         const cleanupMobileMenu = initializeMobileMenu();
+        sessionStorage.removeItem('scrollPosition');
         return () => {
             cleanupMobileMenu(); // Cleanup on unmount
         };

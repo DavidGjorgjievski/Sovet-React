@@ -43,6 +43,8 @@ function AdminPanel() {
 
         const cleanupMobileMenu = initializeMobileMenu();
 
+        sessionStorage.removeItem('scrollPosition');
+
         return () => {
             cleanupMobileMenu();
         };

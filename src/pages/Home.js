@@ -20,6 +20,9 @@ function Home() {
        
         const cleanupMobileMenu = initializeMobileMenu();
 
+        sessionStorage.removeItem('scrollPosition');
+
+
         return () => {
             cleanupMobileMenu();
         };
